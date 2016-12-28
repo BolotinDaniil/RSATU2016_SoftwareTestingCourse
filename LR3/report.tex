@@ -222,7 +222,32 @@
    		\label{fig:class_diagram}
     \end{figure}
 \end{center}
-После запуска программы пользователю требуется пройти авторицазию или регистрацию, после чего ему доступны 2 метода шифрования. Во время работы можно сохранить/загрузить текстовый файл.
+После запуска программы пользователь видит окно авторизации (Рис. \ref{fig:login_form}), с помощью которого он может либо авторизаоваться: введя логин (аглийский алфавит) и пароль; зарегистрироваться (Рис. \ref{fig:registry_form}): введя информацию о себе и о предпочтительных методах шифрования (обязательными явлюятся поля: логин, пароль и метод шифрования); либо же завершить работы с программой с помощью кнопки "Выход".
+\begin{center}
+	\begin{figure}[h!]
+		\centering
+   		\includegraphics[scale=0.5]{img/login_form.png}
+   		\caption{Окно авторизации}
+   		\label{fig:login_form}
+    \end{figure}
+\end{center}
+\begin{center}
+	\begin{figure}[h!]
+		\centering
+   		\includegraphics[scale=0.5]{img/registry_form.png}
+   		\caption{Окно регистрации}
+   		\label{fig:registry_form}
+    \end{figure}
+\end{center}
+После прохождения авторизации пользователю открывается главное окно приложения, в котором ему, из списка методов шифрования, будут доступны лишь те методы, которые были выбраны им на этапе регистрации (Рис. \ref{fig:main_form}).
+\begin{center}
+	\begin{figure}[h!]
+		\centering
+   		\includegraphics[scale=0.5]{img/main_form.png}
+   		\caption{Главное окно программы}
+   		\label{fig:main_form}
+    \end{figure}
+\end{center}
 
 \newpage\section{Общее описание тестируемых классов}
 В ходе данного тестирования проверяется только взаимодействие классов программы между собой, взаимодействие с другими системами не проверяется.
@@ -239,8 +264,8 @@
 \begin{center}
 	\begin{figure}[h!]
 		\centering
-   		\includegraphics[scale=0.6]{img/class_diagram_testing.png}
-   		\caption{Диаграмма тестирующих классов}
+   		% \includegraphics[scale=0.5]{img/class_diagram.png}
+   		\caption{Тут будет диаграмма тестирующих классов, честно:)}
    		\label{fig:class_diagram_test_gui}
     \end{figure}
 \end{center}
@@ -270,7 +295,7 @@ public class LoginUiCloseTest extends LoginUiCustomTest {
 \end{lstlisting}
 
 \subsection{Реакция программы при неверном пароле}
-В окне должна появиться надпись "Неверный пароль!" красного цвета. Этот и последующие тесты класса Login описаны в классе LoginUiTest (Листинг \ref{listing_login:test_wrong_password}).
+В окне должна появиться надпись "Неверный пароль!". Этот и последующие тесты класса Login описаны в классе LoginUiTest (Листинг \ref{listing_login:test_wrong_password}).
 
 \begin{lstlisting}[language=java, caption=Тестирование ввода неверного пароля, label=listing_login:test_wrong_password]
     @Test
@@ -285,7 +310,7 @@ public class LoginUiCloseTest extends LoginUiCustomTest {
 \end{lstlisting}
 
 \subsection{Реакция программы при не существующем логине}
-Должно появиться сообщение "Такого пользователя не существует" (Листинг \ref{listing_login:test_wrong_user}).
+Должно появиться сообщение "Такого пользователя не существует" (Листинг \ref{label=listing_login:test_wrong_user}).
 \begin{lstlisting}[language=java, caption=Тестирование ввода неверного пароля, label=listing_login:test_wrong_user]
     @Test
     public void wrongAuthorizationTest() {
@@ -302,18 +327,7 @@ public class LoginUiCloseTest extends LoginUiCustomTest {
 \subsection{Реакция программы при верной авторизации}
 При верной авторизации должно исчезнуть начальное окно и появиться основное окно программы (Листинг \ref{listing_login:test_true_autorization}). 
 
-\begin{lstlisting}[language=java, caption=Тестирование правильной авторизации, label=listing_login:test_true_autorization]
-	protected void openRegistryWindowAndTest() {
-        clickOn(registry);
-        assertEquals(gridPane.isDisable(), true);
-        waitUntil("#registryPane", visible());
-    }
-
-    protected void closeRegistryWindowAndTest() {
-        clickOn("#back");
-        assertEquals(gridPane.isDisable(), false);
-    }    
-    
+\begin{lstlisting}[language=java, caption=Тестирование ввода неверного пароля, label=listing_login:test_true_autorization]
     @Test
     public void openMainWindowTest() {
         assertEquals(sessionFactory.isClosed(), false);
@@ -411,7 +425,7 @@ public class IntegrationCipherTest {
 
 
 \newpage\section{Тестирование взаимодействия класса MainWindow}
-Этот класс отвечает за главное окно программы и взаимодействует с классами, реализующими методы шифрования. Проведём тестирование, аналогичное тестированию классов MonoAlphabetCipher и BitReverseCipher, но теперь классы для шифрования будут взаимодействовать не напрямую, а через MainWindow(как и происходит на сомом деле), посредством моделирвания работы пользователя с gui. Оно представлено в листинге \ref{listing_mainWindow:MainWindowUiIntegrationTestn}. Предыдущее тестирование направлено на проверку корректности классов шифрования и их взаимодействия, а такущее преимущественно на корректность работы MainWindow с данными классами.
+Этот класс отвечает за главное окно программы и взаимодействует с классами, реализующими методы шифрования. Проведём тестирование, аналогичное тестированию классов MonoAlphabetCipher и BitReverseCipher, но теперь классы для шифрования будут взаимодействовать не напрямую, а через MainWindow(как и происходит на сомом деле), посредством моделирвания работы пользователя с gui. Оно представлено в листинге \ref{listing_mainWindow:MainWindowUiIntegrationTestn}. Предедушее тестирование направлено на проверку корректности классов шифрования и их взаимодействия, а такущее преимущественно на корректность работы MainWindow с данными классами.
 
 \begin{lstlisting}[language=java, caption=класс MainWindowUiIntegrationTest, label=listing_mainWindow:MainWindowUiIntegrationTestn]
 public class MainWindowUiIntegrationTest extends CustomMainWindowUiTest {
@@ -489,12 +503,10 @@ public class MainWindowUiIntegrationTest extends CustomMainWindowUiTest {
 \end{lstlisting}
 
 
-% чтобы данный зоголовок не был пронумерован
-\newpage\section*{Выводы}
-\addcontentsline{toc}{section}{Выводы}
+\newpage\section{Выводы}
 В ходе работы с помошью библиотек JUnit и TestFX было разработано интеграционное тестироваие проекта. Тесты составлялись из рассчёта на то, что всякое непосредственное взаимодеёствие классов программы должно быть покрыто. В результате тестирования была обнаружена ошибка, не замеченная при модульном тестровании: в базовом классе SubstitutionCipher поле privetAlphabet (закрытый алфавит - правила сопоставления символов при шифровании) было объявлено как static, т.е. все наследники этого класса имели один закрытый алфавит на всех, актуальный только для класса, который последний обновил это поле. Такое поведение классов шифрования недопустимо, но не было замечено на предыдущем этапе. Других ошибок обнаружено не было.
-\newpage\section*{Приложение 1. Исходные коды тестируемых классов}
-\addcontentsline{toc}{section}{Приложение 1. Исходные коды тестируемых классов}
+\newpage\section{Приложения}
+Это старые приложения, я их обновлю.
 \begin{lstlisting}[language=java, caption=код модуля SubstitutionCipher.java]
 package encryptionMethods.base;
 
@@ -503,9 +515,9 @@ package encryptionMethods.base;
  */
 public abstract class SubstitutionCipher<T> {
     // Откртый алфавит
-    protected final char[] openAlphabet = new char[32];
+    protected static final char[] openAlphabet = new char[32];
     // Закрытый алфавит
-    protected final char[] privateAlphabet = new char[32];
+    protected static final char[] privateAlphabet = new char[32];
 
     public SubstitutionCipher() {
         createOpenAlphabet();
@@ -569,15 +581,14 @@ public abstract class SubstitutionCipher<T> {
         return -1;
     }
 
-    public char[] getOpenAlphabet() {
+    public static char[] getOpenAlphabet() {
         return openAlphabet;
     }
 
-    public char[] getPrivateAlphabet() {
+    public static char[] getPrivateAlphabet() {
         return privateAlphabet;
     }
 }
-
 \end{lstlisting}
 
 \newpage
@@ -631,7 +642,7 @@ public class BitReversCipher extends SubstitutionCipher<String> {
      * @param key ключ
      */
     @Override
-    public void calculationPrivateAlphabet(String key) {
+    public void calculationPrivateAlphabet (String key) {
         int[] arrayKey = findPosition(key);
         for (int i = 0; i < 32; i++) {
             StringBuilder stI = new StringBuilder(Integer.toBinaryString(i));
@@ -664,939 +675,188 @@ public class BitReversCipher extends SubstitutionCipher<String> {
         return result;
     }
 }
+
 \end{lstlisting}
 
-\begin{lstlisting}[language=java, caption=код модуля MainWindowController.java]
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package controller;
-
+\newpage
+\begin{lstlisting}[language=java, caption=код модуля MonoAlphabetCipherTest.java]
 import encryptionMethods.base.SubstitutionCipher;
-import encryptionMethods.bitrevers.BitReversCipher;
 import encryptionMethods.monoAlphabet.MonoAlphabetCipher;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
-import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-import javafx.stage.WindowEvent;
-import org.hibernate.SessionFactory;
-import utils.FileWorker;
-import utils.alert.ErrorAlert;
-import utils.alert.InformAlert;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
-
-import static utils.UtilFunctions.isNullString;
-
-/**
- * FXML Controller class
- *
- * @author Алексей
- */
-public class MainWindowController implements Initializable {
-
-    public static SessionFactory sessionFactory;
-    public static Stage stage;
-    public static List<String> nameMethods;
-    public MenuItem decodeMonoAlphabet;
-
-    @FXML
-    private TextArea textArea;
-    @FXML
-    private Menu encodeMenu;
-    @FXML
-    private Menu decodeMenu;
-
-    private SubstitutionCipher<Integer> monoAlphabet;
-    private SubstitutionCipher<String> bitRevers;
-    private EventHandler<ActionEvent> nonMethodHandler;
-    private Map<String, EventHandler<ActionEvent>> handlerMap;
-    private Predicate<MenuItem> filterMethods;
-    private Consumer<MenuItem> getDesiredMethods;
-
-    public MainWindowController() {
-
-    }
-
-    /**
-     * Initializes the controller class.
-     */
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
-        initializationPrivateField();
-        encodeMenu.getItems().stream().filter(filterMethods).forEach(getDesiredMethods);
-        decodeMenu.getItems().stream().filter(filterMethods).forEach(getDesiredMethods);
-        initializeStage();
-    }
-
-    private void initializationPrivateField() {
-        monoAlphabet = new MonoAlphabetCipher();
-        bitRevers = new BitReversCipher();
-        handlerMap = new HashMap<>();
-        //<editor-fold desc="Блок определения лямб для фильтрации списков меню шифрования/расшифрования" defaultstate="collapsed">
-        filterMethods = menuItem -> {
-            String id = menuItem.getId();
-            return (nameMethods != null) && nameMethods.contains(id.substring(6));
-        };
-        getDesiredMethods = menuItem -> {
-            String id = menuItem.getId();
-            menuItem.setOnAction(getHandlerByMethodName(id));
-            menuItem.setDisable(false);
-        };
-        //</editor-fold>
-        //<editor-fold desc="Создание обработчика для ситуции когда метод не реализован" defaultstate="collapsed" >
-        nonMethodHandler = event -> {
-            Stage dialog = new Stage();
-            dialog.initStyle(StageStyle.UTILITY);
-            dialog.setTitle("Ввод ключа");
-            VBox box = new VBox();
-            box.setAlignment(Pos.CENTER);
-            HBox buttons = new HBox();
-            buttons.setAlignment(Pos.CENTER);
-            Button buttonOk = new Button("Ok");
-            buttonOk.setId("okDialog");
-            buttonOk.setOnAction((ActionEvent evt) -> {
-                dialog.close();
-            });
-
-            buttons.getChildren().addAll(buttonOk);
-            Label label = new Label("Метод не реализован");
-            label.setId("labelDialog");
-            box.getChildren().addAll(label, buttons);
-            Scene scene = new Scene(box, 300, 100);
-            dialog.setScene(scene);
-            dialog.show();
-        };
-        //</editor-fold>
-        //<editor-fold desc="Заполнения словаря обработчиков шифрования/расшифрования для реализованых методов"  defaultstate="collapsed">
-        handlerMap.put("encodeMonoAlphabet", event -> {
-            Stage dialog = new Stage();
-            dialog.initStyle(StageStyle.UTILITY);
-            dialog.setTitle("Окно ввода ключа");
-            VBox box = new VBox();
-            box.setAlignment(Pos.CENTER);
-            HBox buttons = new HBox();
-            TextField txtField = new TextField();
-            txtField.setId("txtFieldDialog");
-            buttons.setAlignment(Pos.CENTER);
-            Button buttonOk = new Button("Ok");
-            buttonOk.setId("okDialog");
-            buttonOk.setOnAction((ActionEvent evt) -> {
-                Integer key = Integer.valueOf(txtField.getText());
-                monoAlphabet.calculationPrivateAlphabet(key);
-                dialog.close();
-                String codeText = monoAlphabet
-                        .encodeText(textArea.getText().replaceAll("\n", " "));
-                textArea.clear();
-                textArea.setText(codeText);
-            });
-            Button buttonEx = new Button("Cancel");
-            buttonEx.setId("cancelDialog");
-            buttonEx.setOnAction(evt -> {
-                dialog.close();
-            });
-            buttons.getChildren().addAll(buttonOk, buttonEx);
-            Label label = new Label("Введите ключ");
-            label.setId("labelDialog");
-            box.getChildren().addAll(label, txtField, buttons);
-            Scene scene = new Scene(box, 300, 100);
-            dialog.setScene(scene);
-            dialog.show();
-        });
-
-        handlerMap.put("encodeBitRevers", event -> {
-            Stage dialog = new Stage();
-            dialog.initStyle(StageStyle.UTILITY);
-            dialog.setTitle("Окно ввода ключа");
-            VBox box = new VBox();
-            box.setAlignment(Pos.CENTER);
-            HBox buttons = new HBox();
-            TextField txtField = new TextField();
-            txtField.setId("txtFieldDialog");
-            buttons.setAlignment(Pos.CENTER);
-            Button buttonOk = new Button("Ok");
-            buttonOk.setId("okDialog");
-            buttonOk.setOnAction((ActionEvent evt) -> {
-                bitRevers.calculationPrivateAlphabet(txtField.getText());
-                dialog.close();
-                String codeText = bitRevers
-                        .encodeText(textArea.getText().replaceAll("\n", " "));
-                textArea.clear();
-                textArea.setText(codeText);
-            });
-            Button buttonEx = new Button("Cancel");
-            buttonEx.setId("cancelDialog");
-            buttonEx.setOnAction(evt -> {
-                dialog.close();
-            });
-            buttons.getChildren().addAll(buttonOk, buttonEx);
-            Label label = new Label("Введите ключ");
-            label.setId("labelDialog");
-            box.getChildren().addAll(label, txtField, buttons);
-            Scene scene = new Scene(box, 300, 100);
-            dialog.setScene(scene);
-            dialog.show();
-        });
-
-        handlerMap.put("decodeMonoAlphabet", event -> {
-            Stage dialog = new Stage();
-            dialog.initStyle(StageStyle.UTILITY);
-            dialog.setTitle("Окно ввода ключа");
-            VBox box = new VBox();
-            box.setAlignment(Pos.CENTER);
-            HBox buttons = new HBox();
-            TextField txtField = new TextField();
-            txtField.setId("txtFieldDialog");
-            buttons.setAlignment(Pos.CENTER);
-            Button buttonOk = new Button("Ok");
-            buttonOk.setId("okDialog");
-            buttonOk.setOnAction((ActionEvent evt) -> {
-                int key = Integer.valueOf(txtField.getText());
-                monoAlphabet.calculationPrivateAlphabet(key);
-                dialog.close();
-                String decodeText = monoAlphabet
-                        .decodeText(textArea.getText().replaceAll("\n", " "));
-                textArea.clear();
-                textArea.setText(decodeText);
-            });
-            Button buttonEx = new Button("Cancel");
-            buttonEx.setId("cancelDialog");
-            buttonEx.setOnAction(evt -> {
-                dialog.close();
-            });
-            buttons.getChildren().addAll(buttonOk, buttonEx);
-            Label label = new Label("Введите ключ");
-            label.setId("labelDialog");
-            box.getChildren().addAll(label, txtField, buttons);
-            Scene scene = new Scene(box, 300, 100);
-            dialog.setScene(scene);
-            dialog.show();
-        });
-
-        handlerMap.put("decodeBitRevers", event -> {
-            Stage dialog = new Stage();
-            dialog.initStyle(StageStyle.UTILITY);
-            dialog.setTitle("Окно ввода ключа");
-            VBox box = new VBox();
-            box.setAlignment(Pos.CENTER);
-            HBox buttons = new HBox();
-            TextField txtField = new TextField();
-            txtField.setId("txtFieldDialog");
-            buttons.setAlignment(Pos.CENTER);
-            Button buttonOk = new Button("Ok");
-            buttonOk.setId("okDialog");
-            buttonOk.setOnAction((ActionEvent evt) -> {
-                bitRevers.calculationPrivateAlphabet(txtField.getText());
-                dialog.close();
-                String decodeText = bitRevers
-                        .decodeText(textArea.getText().replaceAll("\n", " "));
-                textArea.clear();
-                textArea.setText(decodeText);
-            });
-            Button buttonEx = new Button("Cancel");
-            buttonEx.setId("cancelDialog");
-            buttonEx.setOnAction(evt -> {
-                dialog.close();
-            });
-            buttons.getChildren().addAll(buttonOk, buttonEx);
-            Label label = new Label("Введите ключ");
-            label.setId("labelDialog");
-            box.getChildren().addAll(label, txtField, buttons);
-            Scene scene = new Scene(box, 300, 100);
-            dialog.setScene(scene);
-            dialog.show();
-        });
-        //</editor-fold>
-    }
-
-    private void initializeStage() {
-        if (stage == null) {
-            stage = new Stage();
-            stage.setTitle("Добро пожаловать,  Неизвестный");
-        }
-        ;
-        stage.setOnCloseRequest(we -> sessionFactory.close());
-    }
-
-
-    private EventHandler<ActionEvent> getHandlerByMethodName(String methodName) {
-        if (handlerMap.containsKey(methodName)) {
-            return handlerMap.get(methodName);
-        }
-        return nonMethodHandler;
-    }
-
-    @FXML
-    private void onActionProperty(ActionEvent event) {
-        stage.fireEvent(new WindowEvent(
-                stage,
-                WindowEvent.WINDOW_CLOSE_REQUEST
-        ));
-    }
-
-    @FXML
-    private void onClearTextArea(ActionEvent event) {
-        textArea.clear();
-    }
-
-    @FXML
-    private void openFile(ActionEvent event) throws IOException {
-        FileChooser fileChooser = new FileChooser();//Класс работы с диалогом выборки и сохранения 
-        fileChooser.setTitle("Open Document");//Заголовок диалога 
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("txt files (*.txt)", "*.txt");//Расширение 
-        fileChooser.getExtensionFilters().add(extFilter);
-
-        File file = fileChooser.showOpenDialog(stage);
-        String str = FileWorker.readFile(file).toString();
-        Alert alert = (isNullString(str) || str.equals("Файл не найден")) ?
-                new ErrorAlert("Ошибка чтения файла: " + (isNullString(str) ? "Смотрите лог" : str))
-                : new InformAlert("Файл прочитан.");
-        textArea.setText(str);
-        alert.showAndWait();
-    }
-
-    @FXML
-    private void saveFile(ActionEvent event) {
-        FileChooser fileChooser = new FileChooser();//Класс работы с диалогом выборки и сохранения 
-        fileChooser.setTitle("Save Document");//Заголовок диалога 
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("txt files (*.txt)", "*.txt");//Расширение 
-        fileChooser.getExtensionFilters().add(extFilter);
-        File file = fileChooser.showSaveDialog(stage);//Указываем текущую сцену
-        boolean result = FileWorker.writeFile(file, textArea.getText());
-        Alert alert = result ? new ErrorAlert("Ошибка записи в файл: Смотрите лог")
-                : new InformAlert("Текст записан в файл");
-        alert.showAndWait();
-    }
-
-    @FXML
-    private void getHelpMethod(ActionEvent event) {
-        Stage dialog = new Stage();
-        dialog.initStyle(StageStyle.UTILITY);
-        dialog.setTitle("Справка");
-        VBox box = new VBox();
-        box.setAlignment(Pos.CENTER);
-        TextArea txtAreaHelp = new TextArea();
-        txtAreaHelp.appendText("Моноалфавитная замена \n");
-        txtAreaHelp.appendText(
-                "При Моноалфавитной замене каждой букве открытого текста ставится соответствие одна буква \n"
-                        + "закрытого текста из этого же алфавита. y_i=(K_1 X_i+K_2 ) mod n, где: n-длинна алфавита\n"
-                        + "К_1 и К_2- это константы. К_1=1,К_2- это смещение \n"
-                        + "сиволов закрытого алфавита относительно открытого алфавита, \n"
-                        + "если К_1=1,К_2=3, то это так называемый код Цезаря. X_i- это код \n"
-                        + "i символа открытого алфавита Y_i- это код i символа закрытого алфавита. \n"
-        );
-        txtAreaHelp.appendText("Побитовая перестановка\n");
-        txtAreaHelp.appendText(
-                "Несколько более сложной является побитовая перестановка, при которой в \n"
-                        + "соответствии с вектором перестановки изменяются позиции разрядов двоичного кода \n"
-                        + "символов открытого текста, обычно берутся ASCII коды. \n"
-        );
-
-        HBox buttons = new HBox();
-        buttons.setAlignment(Pos.CENTER);
-        Button buttonOk = new Button("Ok");
-        buttonOk.setOnAction((ActionEvent evt) -> {
-            dialog.close();
-        });
-
-        buttons.getChildren().addAll(buttonOk);
-        box.getChildren().addAll(txtAreaHelp, buttons);
-        Scene scene = new Scene(box, 600, 200);
-        dialog.setScene(scene);
-        dialog.show();
-    }
-
-}
-\end{lstlisting}
-
-\begin{lstlisting}[language=java, caption=код модуля Login.java]
-package controller;
-
-import database.dao.Dao;
-import database.entity.User;
-import database.service.DaoFactory;
-import database.service.DataBaseService;
-import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
-import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
-import org.hibernate.SessionFactory;
-import utils.UtilFunctions;
-
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import static utils.UtilFunctions.isNullString;
-
-/**
- * @author Алексей
- */
-public class Login extends Application {
-
-    private static int count = 0;
-    private EventHandler<ActionEvent> exitHandler;
-    private WindowEvent exitWindow;
-    public static GridPane GRID;
-    public Stage primaryStage;
-    private static Dao<User> userDao;
-    public static SessionFactory sessionFactory;
-
-    static {
-        createEntityForDateBaseWork();
-    }
-
-    {
-        exitWindow = new WindowEvent(
-                primaryStage,
-                WindowEvent.WINDOW_CLOSE_REQUEST
-        );
-        exitHandler = event -> primaryStage.fireEvent(exitWindow);
-    }
-
-    private static void createEntityForDateBaseWork() {
-        DataBaseService dataBaseService = DataBaseService.instanceDataBaseService();
-        sessionFactory = dataBaseService.getSessionFactory();
-        userDao = DaoFactory.getInstance(sessionFactory).getUserDao();
-    }
-
-    @Override
-    public void start(Stage primaryStage) {
-        primaryStage.setOnCloseRequest(we -> sessionFactory.close());
-        this.primaryStage = primaryStage;
-        primaryStage.setTitle("Окно авторизации");
-
-        GRID = new GridPane();
-        GRID.setAlignment(Pos.CENTER);
-        GRID.setVgap(10);
-        GRID.setHgap(10);
-        GRID.setPadding(new Insets(25, 25, 25, 25));
-
-        Text sceneTitle = new Text("Добро пожаловать");
-        sceneTitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
-        GRID.add(sceneTitle, 0, 0, 2, 1);
-
-        Label userName = new Label("User Name: ");
-        GRID.add(userName, 0, 1);
-
-        TextField userTextField = new TextField();
-        userTextField.setId("login");
-        GRID.add(userTextField, 1, 1);
-
-        Label password = new Label("Password: ");
-        GRID.add(password, 0, 2);
-
-        PasswordField pwBox = new PasswordField();
-        pwBox.setId("password");
-        GRID.add(pwBox, 1, 2);
-
-        Button sign = new Button("Авторизоваться");
-        sign.setId("authorization");
-        Button exit = new Button("Выход");
-        exit.setId("exit");
-        Button registration = new Button("Регистрация");
-        registration.setId("checkIn");
-        registration.setOnAction(moveToRegistryWindow());
-
-        HBox hbSign = new HBox(10);
-        hbSign.setAlignment(Pos.BOTTOM_LEFT);
-        hbSign.getChildren().add(sign);
-        hbSign.getChildren().add(registration);
-        hbSign.getChildren().add(exit);
-        GRID.add(hbSign, 1, 5);
-
-        final Text actionTarget = new Text();
-        actionTarget.setId("resultAuthorization");
-        GRID.add(actionTarget, 1, 6);
-
-        exit.setOnAction(exitHandler);
-
-        sign.setOnAction(event -> {
-            actionTarget.setFill(Color.FIREBRICK);
-            String name = userTextField.getText();
-            User user = userDao.getEntityByStringProperty("login", name);
-            if (user == null) {
-                actionTarget.setText("Такого пользователя не существует");
-                return;
-            }
-            String realPassword = user.getPassword();
-            String pass = UtilFunctions.md5Custom(pwBox.getText());
-            if (!realPassword.equals(pass)) {
-                ++count;
-                if (count == 3) {
-                    primaryStage.fireEvent(exitWindow);
-                }
-                actionTarget.setText("Не верный пароль");
-                return;
-            }
-            actionTarget.setFill(Color.GREEN);
-            actionTarget.setText("Пароль верный");
-            Parent root = null;
-            Stage mainWindowStage = new Stage();
-            try {
-                MainWindowController.stage = mainWindowStage;
-                MainWindowController.sessionFactory = sessionFactory;
-                MainWindowController.nameMethods = user.getMethods();
-                String firstName = isNullString(user.getFirstName()) ? "Неизвестный" : user.getFirstName();
-                mainWindowStage.setTitle("Добро пожаловать, " + firstName);
-
-                root = FXMLLoader.load(this.getClass()
-                        .getResource("/fxml/MainWindow.fxml")
-                );
-
-                primaryStage.close(); // закрытие формы авторизации
-                Scene scene = new Scene(root, 400, 400);
-
-                mainWindowStage.setScene(scene);
-                mainWindowStage.show();
-            } catch (IOException ex) {
-                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        });
-
-        Scene scene = new Scene(GRID, 500, 275);
-        primaryStage.setScene(scene);
-
-        primaryStage.show();
-    }
-
-    private EventHandler<ActionEvent> moveToRegistryWindow() {
-        return event -> {
-            Parent root = null;
-            try {
-                GRID.setDisable(true);
-                root = FXMLLoader.load(this.getClass()
-                        .getResource("/fxml/Registry.fxml"));
-                Scene scene = new Scene(root, 600.0D, 400.0D);
-                Stage registryStage = new Stage();
-                registryStage.setScene(scene);
-                RegistryController.STAGE = registryStage;
-                RegistryController.parentPane = GRID;
-                RegistryController.userDao = userDao;
-                registryStage.show();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        };
-    }
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        launch(args);
-    }
-
-}
-
-\end{lstlisting}
-
-\newpage\section*{Приложение 2. Исходные коды тестирующих классов}
-\addcontentsline{toc}{section}{Приложение 2. Исходные коды тестирующих классов}
-
-\begin{lstlisting}[language=java, caption=код модуля CustomMainWindowUiTest.java]
-package ui.custom;
-
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import org.loadui.testfx.GuiTest;
-import org.testfx.api.FxRobot;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-
-/**
- * Created by Алексей on 25.12.2016.
- */
-public class CustomMainWindowUiTest extends GuiTest {
-    protected static FxRobot robot;
-    protected static List<String> methodNames;
-
-    static {
-        robot = new FxRobot();
-
-        methodNames = Arrays.asList(
-                "MonoAlphabet", "HomophonyReplacement", "PolyalphabeticReplacement",
-                "PoligrammnayaReplacement", "VerticalPermutation", "BitRevers",
-                "VizhinerMethod", "XOR"
-        );
-    }
-
-    @Override
-    protected Parent getRootNode() {
-        Parent parent = null;
-        try {
-            parent = FXMLLoader.load(getClass().getResource("/fxml/MainWindow.fxml"));
-            return parent;
-        } catch (IOException ex) {
-            // TODO ...
-        }
-        return parent;
-    }
-}
-\end{lstlisting}
-
-\newpage
-\begin{lstlisting}[language=java, caption=код модуля LoginUiCustomTest.java]
-package ui.custom;
-
-import controller.Login;
-import javafx.scene.control.Button;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.GridPane;
-import javafx.scene.text.Text;
-import javafx.stage.Stage;
-import org.testfx.framework.junit.ApplicationTest;
-
-import static controller.Login.GRID;
-import static org.junit.Assert.assertEquals;
-import static org.loadui.testfx.GuiTest.find;
-import static org.loadui.testfx.GuiTest.waitUntil;
-import static org.loadui.testfx.controls.impl.VisibleNodesMatcher.visible;
-
-/**
- * Created by Алексей on 25.12.2016.
- */
-public abstract class LoginUiCustomTest extends ApplicationTest {
-    protected Text resultAuthorization;
-    protected Button authorization;
-    protected Button registry;
-    protected TextField userName;
-    protected PasswordField password;
-    protected Stage stage;
-    protected GridPane gridPane;
-
-    @Override
-    public void start(Stage stage) throws Exception {
-        this.stage = stage;
-        new Login().start(stage);
-        gridPane = GRID;
-        resultAuthorization = find("#resultAuthorization");
-        authorization = find("#authorization");
-        userName = find("#login");
-        password = find("#password");
-        registry = find("#checkIn");
-    }
-
-    protected void openRegistryWindowAndTest() {
-        clickOn(registry);
-        assertEquals(gridPane.isDisable(), true);
-        waitUntil("#registryPane", visible());
-    }
-
-    protected void closeRegistryWindowAndTest() {
-        clickOn("#back");
-        assertEquals(gridPane.isDisable(), false);
-    }
-}
-\end{lstlisting}
-
-\newpage
-\begin{lstlisting}[language=java, caption=код модуля LoginUiCloseTest.java]
-package ui.login;
-
-import javafx.scene.paint.Color;
-import org.junit.Test;
-import ui.custom.LoginUiCustomTest;
-
-import static controller.Login.sessionFactory;
-import static org.junit.Assert.assertEquals;
-import static org.testfx.api.FxAssert.verifyThat;
-import static org.testfx.matcher.base.NodeMatchers.hasText;
-
-/**
- * Created by Алексей on 25.12.2016.
- */
-public class LoginUiCloseTest extends LoginUiCustomTest {
-    @Test
-    public void threeWrongAuthorizationTest() {
-        for (int i = 0; i < 3; i++) {
-            clickOn(userName).write("Aleksey");
-            clickOn(password).write("tttt");
-            clickOn(authorization).sleep(100);
-            verifyThat(resultAuthorization, hasText("Не верный пароль"));
-            assertEquals(resultAuthorization.getFill(), Color.FIREBRICK);
-            userName.clear();
-            password.clear();
-        }
-        assertEquals(stage.isShowing(), false);
-        assertEquals(sessionFactory.isClosed(), true);
-    }
-}
-\end{lstlisting}
-
-\newpage
-\begin{lstlisting}[language=java, caption=код модуля LoginUiTest.java]
-package ui.login;
-
-import javafx.scene.paint.Color;
-import org.junit.Before;
-import org.junit.Test;
-import ui.custom.LoginUiCustomTest;
-
-import static controller.Login.sessionFactory;
-import static org.junit.Assert.assertEquals;
-import static org.loadui.testfx.GuiTest.waitUntil;
-import static org.loadui.testfx.controls.impl.VisibleNodesMatcher.visible;
-import static org.testfx.api.FxAssert.verifyThat;
-import static org.testfx.matcher.base.NodeMatchers.hasText;
-
-/**
- * Created by Алексей on 20.12.2016.
- */
-public class LoginUiTest extends LoginUiCustomTest {
-
-    @Before
-    public void checkOpenSession() {
-        assertEquals(sessionFactory.isClosed(), false);
-    }
-
-    @Test
-    public void openMainWindowTest() {
-        assertEquals(sessionFactory.isClosed(), false);
-        clickOn(userName).write("Aleksey");
-        clickOn(password).write("yui");
-        clickOn(authorization);
-        verifyThat(resultAuthorization, hasText("Пароль верный"));
-        assertEquals(resultAuthorization.getFill(), Color.GREEN);
-        waitUntil("#AnchorPane", visible());
-    }
-
-    @Test
-    public void wrongAuthorizationTest() {
-        assertEquals(sessionFactory.isClosed(), false);
-        clickOn(userName).write("Aleksey");
-        clickOn(password).write("retdfgdfh");
-        clickOn(authorization);
-        verifyThat(resultAuthorization, hasText("Не верный пароль"));
-        assertEquals(resultAuthorization.getFill(), Color.FIREBRICK);
-    }
-
-    @Test
-    public void openRegistryWindowTest() {
-        openRegistryWindowAndTest();
-        closeRegistryWindowAndTest();
-    }
-
-    @Test
-    public void thisUserDoesntExistTest() {
-        assertEquals(sessionFactory.isClosed(), false);
-        clickOn(userName).write("ТестНик");
-        clickOn(password).write("tttt");
-        clickOn(authorization);
-        verifyThat(resultAuthorization, hasText("Такого пользователя не существует"));
-        assertEquals(resultAuthorization.getFill(), Color.FIREBRICK);
-    }
-}
-\end{lstlisting}
-
-\newpage
-\begin{lstlisting}[language=java, caption=код модуля IntegrationCipherTest.java]
-package unit.integration;
-
-import encryptionMethods.base.SubstitutionCipher;
-import encryptionMethods.bitrevers.BitReversCipher;
-import encryptionMethods.monoAlphabet.MonoAlphabetCipher;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-/**
- * Created by Алексей on 22.12.2016.
- */
-public class IntegrationCipherTest {
-    private static SubstitutionCipher<Integer> monoAlphabet;
-    private static SubstitutionCipher<String> bitRevers;
-    private String actualText;
-
-    @BeforeClass
-    public static void test() {
-        monoAlphabet = new MonoAlphabetCipher();
-        bitRevers = new BitReversCipher();
-    }
-
-    @Before
-    public void createCipherClass() {
-        actualText = "специальныи текст для тестов";
-    }
-
-    @Test
-    public void integrationCipherEqualsTest() {
-        monoAlphabet.calculationPrivateAlphabet(4);
-        bitRevers.calculationPrivateAlphabet("32451");
-        String expectedText = monoAlphabet.encodeText(actualText);
-        expectedText = bitRevers.decodeText(expectedText);
-        expectedText = bitRevers.encodeText(expectedText);
-        expectedText = monoAlphabet.decodeText(expectedText);
-        Assert.assertEquals(expectedText, actualText);
-    }
-
-    @Test
-    public void  integrationCipherNotEqualsTest() {
-        monoAlphabet.calculationPrivateAlphabet(4);
-        bitRevers.calculationPrivateAlphabet("32451");
-        String testText = monoAlphabet.encodeText(actualText);
-        testText = bitRevers.decodeText(testText);
-        bitRevers.calculationPrivateAlphabet("52341");
-        String expectedText = bitRevers.encodeText(testText);
-        Assert.assertNotEquals(expectedText, testText);
-    }
-
-    @Test
-    public void  integrationDeepCipherEqualsTest() {
-        monoAlphabet.calculationPrivateAlphabet(2);
-        String expectedText = monoAlphabet.encodeText(actualText);
-
-        bitRevers.calculationPrivateAlphabet("53241");
-        expectedText = bitRevers.encodeText(expectedText);
-        Assert.assertNotEquals(expectedText, actualText);
-
-        monoAlphabet.calculationPrivateAlphabet(3);
-        expectedText = monoAlphabet.decodeText(expectedText);
-
-        bitRevers.calculationPrivateAlphabet("24531");
-        expectedText = bitRevers.decodeText(expectedText);
-        Assert.assertNotEquals(expectedText, actualText);
-
-        expectedText = bitRevers.encodeText(expectedText);
-        expectedText = monoAlphabet.encodeText(expectedText);
-        Assert.assertNotEquals(expectedText, actualText);
-
-        bitRevers.calculationPrivateAlphabet("53241");
-        expectedText = bitRevers.decodeText(expectedText);
-
-        monoAlphabet.calculationPrivateAlphabet(2);
-        expectedText = monoAlphabet.decodeText(expectedText);
-
-        Assert.assertEquals(expectedText, actualText);
-    }
-}
-\end{lstlisting}
-
-\newpage
-\begin{lstlisting}[language=java, caption=код модуля MainWindowUiIntegrationTest.java]
-package ui.mainwindow;
-
-import controller.MainWindowController;
-import javafx.scene.control.TextArea;
-import org.junit.*;
-import ui.custom.CustomMainWindowUiTest;
-
-import java.util.Arrays;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 /**
- * Created by Алексей on 25.12.2016.
+ * Created by Алексей on 19.12.2016.
  */
-public class MainWindowUiIntegrationTest extends CustomMainWindowUiTest {
-    private TextArea textArea;
-    String actualText;
-
-    @BeforeClass
-    public static void mainWindowSettings() {
-        MainWindowController.nameMethods = Arrays.asList(
-                methodNames.get(0), methodNames.get(5)
-        );
-    }
+public class MonoAlphabetCipherTest {
+    SubstitutionCipher monoAlphabetCipher;
 
     @Before
-    public void findTextArea() {
-        textArea = find("#textArea");
-        actualText = "специальныи текст для тестов";
-        robot.clickOn(textArea).write(actualText);
+    public void beforeTest() {
+        monoAlphabetCipher = new MonoAlphabetCipher();
     }
 
     @After
-    public void clearTextArea() {
-        textArea.clear();
+    public void afterTest() {
+        monoAlphabetCipher = null;
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testNullCalculationPrivateAlphabet() {
+        monoAlphabetCipher.calculationPrivateAlphabet(null);
+    }
+
+    @Test(expected = ClassCastException.class)
+    public void testWrongArgumentCalculationPrivateAlphabet() {
+        monoAlphabetCipher.calculationPrivateAlphabet("test");
     }
 
     @Test
-    public void integrationCipherEqualsTest() {
-        robot.clickOn("#encodeMenu").clickOn("#encodeMonoAlphabet")
-                .clickOn("#txtFieldDialog").write('4').clickOn("#okDialog");
-        robot.clickOn("#decodeMenu").clickOn("#decodeBitRevers")
-                .clickOn("#txtFieldDialog").write("32451").clickOn("#okDialog");
-        robot.clickOn("#encodeMenu").clickOn("#encodeBitRevers")
-                .clickOn("#txtFieldDialog").write("32451").clickOn("#okDialog");
-        robot.clickOn("#decodeMenu").clickOn("#decodeMonoAlphabet")
-                .clickOn("#txtFieldDialog").write('4').clickOn("#okDialog");
-        Assert.assertEquals(textArea.getText(), actualText);
+    public void testCalculationPrivateAlphabet() {
+        char[] actuals = {' ', 'а', 'б', 'в', 'г', 'д', 'е', 'ж', 'з', 'и', 'к', 'л', 'м', 'н', 'о', 'п', 'р', 'с', 'т', 'у', 'ф', 'х', 'ц', 'ч', 'ш', 'щ', 'ъ', 'ы', 'ь', 'э', 'ю', 'я'};
+        monoAlphabetCipher.calculationPrivateAlphabet(0);
+        assertArrayEquals(monoAlphabetCipher.getPrivateAlphabet(), actuals);
+        assertArrayEquals(monoAlphabetCipher.getOpenAlphabet(), actuals);
+        assertArrayEquals(monoAlphabetCipher.getOpenAlphabet(), monoAlphabetCipher.getOpenAlphabet());
     }
 
     @Test
-    public void integrationCipherNotEqualsTest() {
-        robot.clickOn("#encodeMenu").clickOn("#encodeMonoAlphabet")
-                .clickOn("#txtFieldDialog").write('4').clickOn("#okDialog");
-        robot.clickOn("#decodeMenu").clickOn("#decodeBitRevers")
-                .clickOn("#txtFieldDialog").write("32451").clickOn("#okDialog");
-        String testText = textArea.getText();
-        robot.clickOn("#decodeMenu").clickOn("#decodeBitRevers")
-                .clickOn("#txtFieldDialog").write("52341").clickOn("#okDialog");
-        Assert.assertNotEquals(textArea.getText(), testText);
+    public void testCalculationPrivateAlphabetCaesarCipher() {
+        char[] actuals = {'в', 'г', 'д', 'е', 'ж', 'з', 'и', 'к', 'л', 'м', 'н', 'о', 'п', 'р', 'с', 'т', 'у', 'ф', 'х', 'ц', 'ч', 'ш', 'щ', 'ъ', 'ы', 'ь', 'э', 'ю', 'я', ' ', 'а', 'б'};
+        monoAlphabetCipher.calculationPrivateAlphabet(3);
+        assertArrayEquals(monoAlphabetCipher.getPrivateAlphabet(), actuals);
     }
 
     @Test
-    public void  integrationDeepCipherEqualsTest() {
-        robot.clickOn("#encodeMenu").clickOn("#encodeMonoAlphabet")
-                .clickOn("#txtFieldDialog").write("2").clickOn("#okDialog");
-        robot.clickOn("#encodeMenu").clickOn("#encodeBitRevers")
-                .clickOn("#txtFieldDialog").write("53241").clickOn("#okDialog");
-        Assert.assertNotEquals(textArea.getText(), actualText);
-        robot.clickOn("#decodeMenu").clickOn("#decodeMonoAlphabet")
-                .clickOn("#txtFieldDialog").write('3').clickOn("#okDialog");
-        robot.clickOn("#decodeMenu").clickOn("#decodeBitRevers")
-                .clickOn("#txtFieldDialog").write("24531").clickOn("#okDialog");
-        Assert.assertNotEquals(textArea.getText(), actualText);
-        robot.clickOn("#encodeMenu").clickOn("#encodeBitRevers")
-                .clickOn("#txtFieldDialog").write("24531").clickOn("#okDialog");
-        robot.clickOn("#encodeMenu").clickOn("#encodeMonoAlphabet")
-                .clickOn("#txtFieldDialog").write('3').clickOn("#okDialog");
-        Assert.assertNotEquals(textArea.getText(), actualText);
-        robot.clickOn("#decodeMenu").clickOn("#decodeBitRevers")
-                .clickOn("#txtFieldDialog").write("53241").clickOn("#okDialog");
-        robot.clickOn("#decodeMenu").clickOn("#decodeMonoAlphabet")
-                .clickOn("#txtFieldDialog").write('2').clickOn("#okDialog");
-        Assert.assertEquals(textArea.getText(), actualText);
+    public void testEncodeText() {
+        monoAlphabetCipher.calculationPrivateAlphabet(3);
+        assertEquals(monoAlphabetCipher.encodeText("тест"), "хифх");
+    }
+
+    @Test
+    public void testEncodeAndDecode() {
+        monoAlphabetCipher.calculationPrivateAlphabet(30);
+        String encode = monoAlphabetCipher.encodeText("тест");
+        assertEquals("тест", monoAlphabetCipher.decodeText(encode));
+    }
+
+    @Test
+    public void testWrongCharInEncodeAndDecodeText() {
+        monoAlphabetCipher.calculationPrivateAlphabet(1);
+        Assert.assertEquals(monoAlphabetCipher.encodeText("tttt"), "Недопустимый символ. Шифрование не возможно");
+        Assert.assertEquals(monoAlphabetCipher.encodeText("й"), "Недопустимый символ. Шифрование не возможно");
+        Assert.assertEquals(monoAlphabetCipher.encodeText("ё"), "Недопустимый символ. Шифрование не возможно");
+        Assert.assertEquals(monoAlphabetCipher.encodeText("-"), "Недопустимый символ. Шифрование не возможно");
+        Assert.assertEquals(monoAlphabetCipher.encodeText("+"), "Недопустимый символ. Шифрование не возможно");
+        Assert.assertEquals(monoAlphabetCipher.decodeText("tttt"), "Недопустимый символ. Расшифровка не возможно");
+        Assert.assertEquals(monoAlphabetCipher.decodeText("й"), "Недопустимый символ. Расшифровка не возможно");
+        Assert.assertEquals(monoAlphabetCipher.decodeText("ё"), "Недопустимый символ. Расшифровка не возможно");
+        Assert.assertEquals(monoAlphabetCipher.decodeText("-"), "Недопустимый символ. Расшифровка не возможно");
+        Assert.assertEquals(monoAlphabetCipher.decodeText("+"), "Недопустимый символ. Расшифровка не возможно");
     }
 }
+\end{lstlisting}
+
+\newpage
+\begin{lstlisting}[language=java, caption=код модуля BitReversCipherTest.java]
+import encryptionMethods.base.SubstitutionCipher;
+import encryptionMethods.bitrevers.BitReversCipher;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+
+/**
+ * Created by Алексей on 19.12.2016.
+ */
+public class BitReversCipherTest {
+    SubstitutionCipher bitReversCipher;
+
+    @Before
+    public void beforeTest() {
+        bitReversCipher = new BitReversCipher();
+    }
+
+    @After
+    public void afterTest() {
+        bitReversCipher = null;
+    }
+
+    @Test
+    public void testCalculationPrivateAlphabetEqualsOpenAlphabet() {
+        char[] actuals = {' ', 'а', 'б', 'в', 'г', 'д', 'е', 'ж', 'з', 'и', 'к', 'л', 'м', 'н', 'о', 'п', 'р', 'с', 'т', 'у', 'ф', 'х', 'ц', 'ч', 'ш', 'щ', 'ъ', 'ы', 'ь', 'э', 'ю', 'я'};
+        bitReversCipher.calculationPrivateAlphabet("12345");
+        assertArrayEquals(bitReversCipher.getPrivateAlphabet(), actuals);
+        assertArrayEquals(bitReversCipher.getOpenAlphabet(), actuals);
+        assertArrayEquals(bitReversCipher.getOpenAlphabet(), bitReversCipher.getOpenAlphabet());
+    }
+
+    @Test
+    public void testCalculationPrivateAlphabet() {
+        char[] actuals = {' ', 'р', 'з', 'ш', 'г', 'ф', 'м', 'ь', 'б', 'т', 'к', 'ъ', 'е', 'ц', 'о', 'ю', 'а', 'с', 'и', 'щ', 'д', 'х', 'н', 'э', 'в', 'у', 'л', 'ы', 'ж', 'ч', 'п', 'я'};
+        bitReversCipher.calculationPrivateAlphabet("54321");
+        assertArrayEquals(bitReversCipher.getPrivateAlphabet(), actuals);
+    }
+
+    @Test
+    public void testFirstElementPrivateAlphabetAtAnyKey() {
+        bitReversCipher.calculationPrivateAlphabet("54321");
+        assertEquals(bitReversCipher.getPrivateAlphabet()[0], ' ');
+        bitReversCipher.calculationPrivateAlphabet("53241");
+        assertEquals(bitReversCipher.getPrivateAlphabet()[0], ' ');
+        bitReversCipher.calculationPrivateAlphabet("13425");
+        assertEquals(bitReversCipher.getPrivateAlphabet()[0], ' ');
+        bitReversCipher.calculationPrivateAlphabet("31245");
+        assertEquals(bitReversCipher.getPrivateAlphabet()[0], ' ');
+    }
+
+    @Test
+    public void testEncode() {
+        bitReversCipher.calculationPrivateAlphabet("54321");
+        assertEquals(bitReversCipher.encodeText("тест"), "имси");
+    }
+
+    @Test
+    public void testEncodeDecode() {
+        bitReversCipher.calculationPrivateAlphabet("54321");
+        String encode = bitReversCipher.encodeText("тест");
+        assertEquals(bitReversCipher.decodeText(encode), "тест");
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void testWrongValueForCalculationPrivateAlphabet() {
+        bitReversCipher.calculationPrivateAlphabet("00000");
+    }
+
+    @Test(expected = ClassCastException.class)
+    public void testWrongArgumentForCalculationPrivateAlphabet() {
+        bitReversCipher.calculationPrivateAlphabet(1213234);
+    }
+
+    @Test
+    public void testWrongCharInEncodeAndDecodeText() {
+        bitReversCipher.calculationPrivateAlphabet("54321");
+        Assert.assertEquals(bitReversCipher.encodeText("tttt"), "Недопустимый символ. Шифрование не возможно");
+        Assert.assertEquals(bitReversCipher.encodeText("й"), "Недопустимый символ. Шифрование не возможно");
+        Assert.assertEquals(bitReversCipher.encodeText("ё"), "Недопустимый символ. Шифрование не возможно");
+        Assert.assertEquals(bitReversCipher.encodeText("-"), "Недопустимый символ. Шифрование не возможно");
+        Assert.assertEquals(bitReversCipher.encodeText("+"), "Недопустимый символ. Шифрование не возможно");
+        Assert.assertEquals(bitReversCipher.decodeText("tttt"), "Недопустимый символ. Расшифровка не возможно");
+        Assert.assertEquals(bitReversCipher.decodeText("й"), "Недопустимый символ. Расшифровка не возможно");
+        Assert.assertEquals(bitReversCipher.decodeText("ё"), "Недопустимый символ. Расшифровка не возможно");
+        Assert.assertEquals(bitReversCipher.decodeText("-"), "Недопустимый символ. Расшифровка не возможно");
+        Assert.assertEquals(bitReversCipher.decodeText("+"), "Недопустимый символ. Расшифровка не возможно");
+    }
+}
+
 \end{lstlisting}
 
 

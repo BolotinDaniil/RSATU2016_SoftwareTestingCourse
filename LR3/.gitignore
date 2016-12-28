@@ -1,0 +1,4 @@
+*.toc
+/report.aux
+/report.dvi
+/report.log
