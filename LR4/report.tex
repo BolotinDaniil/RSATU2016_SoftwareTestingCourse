@@ -325,23 +325,104 @@ public class DatabaseAndRegistryUiTest extends LoginUiCustomTest {
 
 \newpage \section{Пример тестирования}
 
-В таблице ниже пример тестрования.
+В таблицах, представленных в приложении приведены пример тестрования выполнения сценариев.
 
+
+\newpage
+
+\newpage\section*{Выводы}
+\addcontentsline{toc}{section}{Выводы}
+В ходе выполнения лабораторной работы было разработано и проведено системное тестирвание пректа. Для написания тестов была использована библиотека JUnit, а действия пользователя моделировались с помошью библиотеки TestFX. Ручные тесты составлялись из рассчёта на то, чтобы смоделировать типовые действие пользователя, которые не были протестированы на предыдущем этапе. В ходе тестирования ошибок не обнаружено.
+
+\newpage\section*{Приложение}
+\addcontentsline{toc}{section}{Приложение}
 \begin{table}[h]
 	\caption{Тестрование регистрации пользователя}
 	\centering
 	\begin{tabular}{|c|c|c|}
 	\hline 
 	№  & Результат & Примечание \\ 
-	1 & \includegraphics[scale=0.5]{img/database/authorization.png} & Всё ок \\
 	\hline 
-	2 & * & дальше пили по аналогии\\
+	1 & \includegraphics[scale=0.3]{img/database/before_registry_user.png} & В базе присутсвуют \\ && только два пользователя \\
 	\hline 
+	2 & \includegraphics[scale=0.3]{img/database/before_registry_methods.png} & В базе каждому пользователю \\ && соответсвуют два метода\\
+	\hline 
+	3 & \includegraphics[scale=0.3]{img/login_form.png} & Открываем окно авторизации\\
+	\hline 
+	4 & \includegraphics[scale=0.3]{img/database/before_registry_form.png} & Открываем окно регистрации \\ && и заполняем все поля\\
+	\hline 
+	5 & \includegraphics[scale=0.3]{img/database/after_registry_user.png} & После регистрации можно увидеть, \\ && что введенный пользователь появился в БД\\
+	\hline
 \end{tabular} 
 \label{table:data_type} 
 \end{table}
+\begin{table}[h]
+	\caption{Тестрование регистрации пользователя}
+	\centering
+	\begin{tabular}{|c|c|c|}
+	\hline 
+	№  & Результат & Примечание \\ 
+	\hline 
+	6 & \includegraphics[scale=0.3]{img/database/after_registry_methods.png} & Так же можно увидеть, что для нового \\ && пользователя появились соответсвующие методы\\
+	\hline 
+	7 & \includegraphics[scale=0.3]{img/database/authorization.png} & Открываем окно авторизации \\ && и заходим в систему под \\ && новым пользователем\\
+	\hline 
+	8 & \includegraphics[scale=0.3]{img/database/main_open_methods.png} & Так же можно увидеть, \\ && что для нового пользователя \\ && появились соответсвующие методы шифрования\\
+	\hline 
+	9 & \includegraphics[scale=0.3]{img/database/main_open_methods2.png} & Так же можно увидеть, \\ && что для нового пользователя \\ && появились соответсвующие методы расшифрования\\
+	\hline 
+\end{tabular} 
+\label{table:data_type2} 
+\end{table}
 
+\begin{table}[h]
+	\caption{Тестрование сохранения в файл}
+	\centering
+	\begin{tabular}{|c|c|c|}
+	\hline 
+	№  & Результат & Примечание \\ 
+	\hline 
+	1 & \includegraphics[scale=0.3]{img/file/open/text_open4.png} & Вводим текст в поле для \\ && ввода текста (memo) \\
+	\hline 
+	2 & \includegraphics[scale=0.3]{img/file/save/text_path.png} & Выбираем путь, куда будет \\ && сохранен файл с текстом\\
+	\hline 
+	3 & \includegraphics[scale=0.3]{img/file/save/text_okey_save.png} & Вывод сообщения о том что файл сохранен\\
+	\hline 
+\end{tabular} 
+\label{table:data_type3} 
+\end{table}
 
-\newpage\section*{Выводы}
-\addcontentsline{toc}{section}{Выводы}
-В ходе выполнения лабораторной работы было разработано и проведено системное тестирвание пректа. Для написания тестов была использована библиотека JUnit, а действия пользователя моделировались с помошью библиотеки TestFX. Ручные тесты составлялись из рассчёта на то, чтобы смоделировать типовые действие пользователя, которые не были протестированы на предыдущем этапе. В ходе тестирования ошибок не обнаружено.
+\begin{table}[h!]
+	\caption{Тестрование открытия файла}
+	\centering
+	\begin{tabular}{|c|c|c|}
+	\hline 
+	№  & Результат & Примечание \\ 
+	\hline 
+	1 & \includegraphics[scale=0.3]{img/file/open/text_clear.png} & Выбираем очистку поля ввода \\
+	\hline 
+	2 & \includegraphics[scale=0.3]{img/file/open/text_clear1.png} & Видим что поле очистилось\\
+	\hline 
+	3 & \includegraphics[scale=0.3]{img/file/open/text_open.png} & Выбираем открытия файла\\
+	\hline 
+\end{tabular} 
+\label{table:data_type4} 
+\end{table}
+\begin{table}[h]
+	\caption{Тестрование открытия файла}
+	\centering
+	\begin{tabular}{|c|c|c|}
+	\hline 
+	№  & Результат & Примечание \\ 
+	\hline 
+	5 & \includegraphics[scale=0.3]{img/file/open/text_open2.png} & Выбираем путь до файла\\
+	\hline 
+	6 & \includegraphics[scale=0.3]{img/file/open/text_open3.png} & Видим, что файл открылся\\
+	\hline
+	7 & \includegraphics[scale=0.3]{img/file/open/text_open4.png} & Текст из файла в поле\\
+	\hline
+\end{tabular} 
+\label{table:data_type5} 
+\end{table}
+
+\end{document}
