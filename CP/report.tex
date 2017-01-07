@@ -543,18 +543,414 @@
 
 \newpage \section{Интеграционное тестирование}
 \subsection{Общее описание}
-Целью интеграционного тестирования является проверка всех возможных непосредвенных взаимодействий классов программы
+Целью интеграционного тестирования является проверка всех возможных непосредвенных взаимодействий классов программы. 
+Для его проведения использовано JUnit и TestFX.
+
+\newpage\subsection{Тестирование взаимодействия класса Login}
+Login - это главный класс приложения, который запускает его и одновременно является контроллером для окна авторизации. Пользователь должен пройти авторизацию или зарегистрироваться. Если после третьей попытки не удалось авторизиваться, то программа закрывается.
+\subsubsection{Закрытие программы при неверной авторизации}
+С помощью TestFx моделируется попытка неудачной авторизации: три раза вводим не верный пароль. На каждом шаге проверяем появилось ли в специальной строке сообщение об ошибке: "Не верный пароль''", выделенное красным цветом. (листинг \ref{listing_login:test_wrong_authorization}).
+\begin{lstlisting}[language=java, caption=Тестирование неверной авторизации, label=listing_login:test_wrong_authorization]
+public class LoginUiCloseTest extends LoginUiCustomTest {
+    @Test
+    public void threeWrongAuthorizationTest() {
+        for (int i = 0; i < 3; i++) {
+            clickOn(userName).write("Aleksey");
+            clickOn(password).write("tttt");
+            clickOn(authorization).sleep(100);
+            verifyThat(resultAuthorization, hasText("Не верный пароль"));
+            assertEquals(resultAuthorization.getFill(), Color.FIREBRICK);
+            userName.clear();
+            password.clear();
+        }
+        assertEquals(stage.isShowing(), false);
+        assertEquals(sessionFactory.isClosed(), true);
+    }
+}
+\end{lstlisting}
+
+\subsubsection{Реакция программы при неверном пароле}
+При вводе корректного (существующего) логина пользователя, но некорректного пароля для него в специальной строке формы авторизации должна появиться надпись "Неверный пароль''", выделенная красным цветом. Этот (листинг \ref{listing_login:test_wrong_password}) и последующие тесты класса Login описаны в классе LoginUiTest.
+
+\begin{lstlisting}[language=java, caption=Тестирование ввода неверного пароля, label=listing_login:test_wrong_password]      
+    @Test
+    public void wrongAuthorizationTest() {
+        assertEquals(sessionFactory.isClosed(), false);
+        clickOn(userName).write("Aleksey");
+        clickOn(password).write("retdfgdfh");
+        clickOn(authorization);
+        verifyThat(resultAuthorization, hasText("Не верный пароль"));
+        assertEquals(resultAuthorization.getFill(), Color.FIREBRICK);
+    }
+\end{lstlisting}
+
+\subsubsection{Реакция программы при не существующем логине}
+После нажатия на кнопку авторизации в БД ищется пользователь с указаным логином, если не возвращается пользователь с таким логином, то должно появиться сообщение: "Такого пользователя не существует" (листинг \ref{listing_login:test_wrong_user}).
+\begin{lstlisting}[language=java, caption=Тестирование при несуществующем логине, label=listing_login:test_wrong_user]
+    @Test
+    public void thisUserDoesntExistTest() {
+        assertEquals(sessionFactory.isClosed(), false);
+        clickOn(userName).write("ТестНик");
+        clickOn(password).write("tttt");
+        clickOn(authorization);
+        verifyThat(resultAuthorization, hasText("Такого пользователя не существует"));
+        assertEquals(resultAuthorization.getFill(), Color.FIREBRICK);
+    }
+\end{lstlisting}
+
+
+\subsubsection{Реакция программы при верной авторизации}
+При прохождении авторизации окно авторизации должно закрыться, а вместо него должно появиться основное окно программы (листинг \ref{listing_login:test_true_autorization}). 
+
+\begin{lstlisting}[language=java, caption=Тестирование прохождения авторизации, label=listing_login:test_true_autorization]
+    @Test
+    public void openMainWindowTest() {
+        assertEquals(sessionFactory.isClosed(), false);
+        clickOn(userName).write("Aleksey");
+        clickOn(password).write("yui");
+        clickOn(authorization);
+        verifyThat(resultAuthorization, hasText("Пароль верный"));
+        assertEquals(resultAuthorization.getFill(), Color.GREEN);
+        waitUntil("#AnchorPane", visible());
+    }
+\end{lstlisting}
+
+\subsubsection{Тестирование перехода к окну регистрации}
+При нажатии на кнопку "'Регистация'' , должно появится соответствующее окно, а окно для авторизации исчезнуть (листинг \ref{listing_login:test_registration_to_registration}). 
+\begin{lstlisting}[language=java, caption=Тестирование перехода к окну регистрации, label=listing_login:test_registration_to_registration]
+	protected void openRegistryWindowAndTest() {
+        clickOn(registry);
+        assertEquals(gridPane.isDisable(), true);
+        waitUntil("#registryPane", visible());
+    }
+
+    protected void closeRegistryWindowAndTest() {
+        clickOn("#back");
+        assertEquals(gridPane.isDisable(), false);
+    }     
+    @Test
+    public void openRegistryWindowTest() {
+        openRegistryWindowAndTest();
+        closeRegistryWindowAndTest();
+    }
+\end{lstlisting}
+
+\newpage\subsubsection{Тестирование взаимодействия классов \\MonoAlphabetCipher и BitReverseCipher}
+Тестирование осуществляется посредством многократного шифрования и расшифрования текста различными методами. После последовательного шифрования и расшифрования разными методами с неизменными ключами текст должен совпасть с исходным. Если провести такой же тест, но при расшифровании изменить ключ одного из методов, то результат должен не совпасть с исходным. Далее проведём тест, при котором зашуфруем несколько раз обоими методами с разнами ключами и расшуфруем в обратном порядке с соответствующими ключами, результат должен совпасть с исходным. Все эти три теста описаны в классе IntegrationCipherTest, который представлен в листинге \ref{listing_cipher:test_cipher_methods}.
+
+\begin{lstlisting}[language=java, caption=класс IntegrationCipherTest, label=listing_cipher:test_cipher_methods]
+public class IntegrationCipherTest {
+    private static SubstitutionCipher<Integer> monoAlphabet;
+    private static SubstitutionCipher<String> bitRevers;
+    private String actualText;
+
+    @BeforeClass
+    public static void test() {
+        monoAlphabet = new MonoAlphabetCipher();
+        bitRevers = new BitReversCipher();
+    }
+
+    @Before
+    public void createCipherClass() {
+        actualText = "специальныи текст для тестов";
+    }
+
+    @Test
+    public void integrationCipherEqualsTest() {
+        monoAlphabet.calculationPrivateAlphabet(4);
+        bitRevers.calculationPrivateAlphabet("32451");
+        String expectedText = monoAlphabet.encodeText(actualText);
+        expectedText = bitRevers.decodeText(expectedText);
+        expectedText = bitRevers.encodeText(expectedText);
+        expectedText = monoAlphabet.decodeText(expectedText);
+        Assert.assertEquals(expectedText, actualText);
+    }
+
+    @Test
+    public void  integrationCipherNotEqualsTest() {
+        monoAlphabet.calculationPrivateAlphabet(4);
+        bitRevers.calculationPrivateAlphabet("32451");
+        String testText = monoAlphabet.encodeText(actualText);
+        testText = bitRevers.decodeText(testText);
+        bitRevers.calculationPrivateAlphabet("52341");
+        String expectedText = bitRevers.encodeText(testText);
+        Assert.assertNotEquals(expectedText, testText);
+    }
+
+    @Test
+    public void  integrationDeepCipherEqualsTest() {
+        monoAlphabet.calculationPrivateAlphabet(2);
+        String expectedText = monoAlphabet.encodeText(actualText);
+
+        bitRevers.calculationPrivateAlphabet("53241");
+        expectedText = bitRevers.encodeText(expectedText);
+        Assert.assertNotEquals(expectedText, actualText);
+
+        monoAlphabet.calculationPrivateAlphabet(3);
+        expectedText = monoAlphabet.decodeText(expectedText);
+
+        bitRevers.calculationPrivateAlphabet("24531");
+        expectedText = bitRevers.decodeText(expectedText);
+        Assert.assertNotEquals(expectedText, actualText);
+
+        expectedText = bitRevers.encodeText(expectedText);
+        expectedText = monoAlphabet.encodeText(expectedText);
+        Assert.assertNotEquals(expectedText, actualText);
+
+        bitRevers.calculationPrivateAlphabet("53241");
+        expectedText = bitRevers.decodeText(expectedText);
+
+        monoAlphabet.calculationPrivateAlphabet(2);
+        expectedText = monoAlphabet.decodeText(expectedText);
+
+        Assert.assertEquals(expectedText, actualText);
+    }
+}
+\end{lstlisting}
+
+
+\newpage\subsubsection{Тестирование взаимодействия класса MainWindow}
+MainWindow - класс отвечающий за главное окно программы. Он взаимодействует с классами, реализующими методы шифрования. Проведём тестирование, аналогичное тестированию классов MonoAlphabetCipher и BitReverseCipher, но теперь классы для шифрования будут взаимодействовать не напрямую, а через MainWindow (как и происходит на самом деле), посредством моделирвания работы пользователя с gui. Оно представлено в листинге \ref{listing_mainWindow:MainWindowUiIntegrationTestn}. Предыдушее тестирование направлено на проверку корректности классов шифрования и их взаимодействия, а такущее преимущественно на корректность работы MainWindow с данными классами.
+
+\begin{lstlisting}[language=java, caption=класс MainWindowUiIntegrationTest, label=listing_mainWindow:MainWindowUiIntegrationTestn]
+public class MainWindowUiIntegrationTest extends CustomMainWindowUiTest {
+    private TextArea textArea;
+    String actualText;
+
+    @BeforeClass
+    public static void mainWindowSettings() {
+        MainWindowController.nameMethods = Arrays.asList(
+                methodNames.get(0), methodNames.get(5)
+        );
+    }
+
+    @Before
+    public void findTextArea() {
+        textArea = find("#textArea");
+        actualText = "специальныи текст для тестов";
+        robot.clickOn(textArea).write(actualText);
+    }
+
+    @After
+    public void clearTextArea() {
+        textArea.clear();
+    }
+
+    @Test
+    public void integrationCipherEqualsTest() {
+        robot.clickOn("#encodeMenu").clickOn("#encodeMonoAlphabet")
+                .clickOn("#txtFieldDialog").write('4').clickOn("#okDialog");
+        robot.clickOn("#decodeMenu").clickOn("#decodeBitRevers")
+                .clickOn("#txtFieldDialog").write("32451").clickOn("#okDialog");
+        robot.clickOn("#encodeMenu").clickOn("#encodeBitRevers")
+                .clickOn("#txtFieldDialog").write("32451").clickOn("#okDialog");
+        robot.clickOn("#decodeMenu").clickOn("#decodeMonoAlphabet")
+                .clickOn("#txtFieldDialog").write('4').clickOn("#okDialog");
+        Assert.assertEquals(textArea.getText(), actualText);
+    }
+
+    @Test
+    public void integrationCipherNotEqualsTest() {
+        robot.clickOn("#encodeMenu").clickOn("#encodeMonoAlphabet")
+                .clickOn("#txtFieldDialog").write('4').clickOn("#okDialog");
+        robot.clickOn("#decodeMenu").clickOn("#decodeBitRevers")
+                .clickOn("#txtFieldDialog").write("32451").clickOn("#okDialog");
+        String testText = textArea.getText();
+        robot.clickOn("#decodeMenu").clickOn("#decodeBitRevers")
+                .clickOn("#txtFieldDialog").write("52341").clickOn("#okDialog");
+        Assert.assertNotEquals(textArea.getText(), testText);
+    }
+
+    @Test
+    public void  integrationDeepCipherEqualsTest() {
+        robot.clickOn("#encodeMenu").clickOn("#encodeMonoAlphabet")
+                .clickOn("#txtFieldDialog").write("2").clickOn("#okDialog");
+        robot.clickOn("#encodeMenu").clickOn("#encodeBitRevers")
+                .clickOn("#txtFieldDialog").write("53241").clickOn("#okDialog");
+        Assert.assertNotEquals(textArea.getText(), actualText);
+        robot.clickOn("#decodeMenu").clickOn("#decodeMonoAlphabet")
+                .clickOn("#txtFieldDialog").write('3').clickOn("#okDialog");
+        robot.clickOn("#decodeMenu").clickOn("#decodeBitRevers")
+                .clickOn("#txtFieldDialog").write("24531").clickOn("#okDialog");
+        Assert.assertNotEquals(textArea.getText(), actualText);
+        robot.clickOn("#encodeMenu").clickOn("#encodeBitRevers")
+                .clickOn("#txtFieldDialog").write("24531").clickOn("#okDialog");
+        robot.clickOn("#encodeMenu").clickOn("#encodeMonoAlphabet")
+                .clickOn("#txtFieldDialog").write('3').clickOn("#okDialog");
+        Assert.assertNotEquals(textArea.getText(), actualText);
+        robot.clickOn("#decodeMenu").clickOn("#decodeBitRevers")
+                .clickOn("#txtFieldDialog").write("53241").clickOn("#okDialog");
+        robot.clickOn("#decodeMenu").clickOn("#decodeMonoAlphabet")
+                .clickOn("#txtFieldDialog").write('2').clickOn("#okDialog");
+        Assert.assertEquals(textArea.getText(), actualText);
+    }
+}
+\end{lstlisting}
 
 \newpage \section{Системное тестирование}
 \subsection{Общее описание}
 Целью является тестирование всей системы в целом на реальной БД.
 
+\newpage \subsection{Тестирование регистрации пользователя}
+Протестируем работу GUI и работу с базой данных.  
+
+\subsubsection{Попытка регистрации уже существующего пользователя}
+Для начала проведём тестирования попытки регистрации пользователя, который уже есть в базе. Должно быть соответвующее сообщение. Класс для проведения этого тестирования представлен в листинге \ref{lstlisting_database:test_ui}.
+
+\begin{lstlisting}[language=java, caption=код модуля DatabaseAndRegistryUiTest.java, label=lstlisting_database:test_ui]
+package ui.RegistryUiTest;
+
+import javafx.scene.control.Label;
+import org.junit.Assert;
+import org.junit.Test;
+import ui.custom.LoginUiCustomTest;
+
+import static org.loadui.testfx.GuiTest.find;
+
+/**
+ * Created by Алексей on 26.12.2016.
+ */
+public class DatabaseAndRegistryUiTest extends LoginUiCustomTest {
+
+    @Test
+    public void userExistsTest() {
+        clickOn(registry);
+        clickOn("#login").write("Aleksey");
+        clickOn("#password").write("tesPass");
+        clickOn("#signUp");
+        Label outputErrorText = find("#outputErrorText");
+        Assert.assertEquals(outputErrorText.getText(), "Пользователь с логином: Aleksey существует!");
+        closeRegistryWindowAndTest();
+    }
+
+
+}
+\end{lstlisting}
+
+\subsubsection{Добавление пользователя в БД}
+\par Сценарий тестирования регистрации пользователя заключается в следующем:
+\begin{enumerate}
+\item На форме авторизации нажатие кнопки "Регистрация".
+\item Запоняем все поля формы, предварительно убедившись, что такого пользователя нет в базе.
+\item Нажимаем на кнопку регистрация и убеждаемся, что в БД плявилась соответствующая запись. При этом с формы ргистрации мы должны обратно прейти к форме авторизации.
+\item Вводим логин и пароль нового пользователя после чего должны попасть на главное окно.
+\item Убеждаемся, что активированы только те методы, которые были указаны при регистации.
+\end{enumerate}
+
+\newpage \subsection{Тестирвоание загрузки и сохранения в файл}
+Тестирование проводится вручную  по следущему сценарию:
+\begin{enumerate}
+\item Авторизуемся.
+\item Пишем в поле ввода "Текст для записи в файл".
+\item В меню выбираем Файл->Сохранить.
+\item Убедимся, что файл был создан.
+\item В меню выбираем Файл->Загрузить.
+\item Убедимя, что файл загружен правильно.
+\end{enumerate}
+
+\newpage \subsection{Проведение тестирования}
+
+В таблицах \ref{table:data_type1} - \ref{table:data_type5}, описано применение ручных сценариев тестирования.
+
+\begin{table}[h]
+	\caption{Тестрование регистрации пользователя}
+	\centering
+	\begin{tabular}{|c|c|c|}
+	\hline 
+	№  & Результат & Примечание \\ 
+	\hline 
+	1 & \includegraphics[scale=0.3]{img/database/before_registry_user.png} & В базе присутсвуют \\ && только два пользователя \\
+	\hline 
+	2 & \includegraphics[scale=0.3]{img/database/before_registry_methods.png} & В базе каждому пользователю \\ && соответсвуют два метода\\
+	\hline 
+	3 & \includegraphics[scale=0.3]{img/login_form.png} & Открываем окно авторизации\\
+	\hline 
+	4 & \includegraphics[scale=0.3]{img/database/before_registry_form.png} & Открываем окно регистрации \\ && и заполняем все поля\\
+	\hline 
+	5 & \includegraphics[scale=0.3]{img/database/after_registry_user.png} & После регистрации можно увидеть, \\ && что введенный пользователь появился в БД\\
+	\hline
+\end{tabular} 
+\label{table:data_type1} 
+\end{table}
+
+\begin{table}[pt!]
+	\caption{Тестрование регистрации пользователя}
+	\centering
+	\begin{tabular}{|c|c|c|}
+	\hline 
+	№  & Результат & Примечание \\ 
+	\hline 
+	6 & \includegraphics[scale=0.3]{img/database/after_registry_methods.png} & Так же можно увидеть, что \\ && для нового пользователя \\ && появились соответсвующие методы\\
+	\hline 
+	7 & \includegraphics[scale=0.3]{img/database/authorization.png} & Открываем окно авторизации \\ && и заходим в систему под \\ && новым пользователем\\
+	\hline 
+	8 & \includegraphics[scale=0.3]{img/database/main_open_methods.png} & Так же можно увидеть, \\ && что для нового пользователя появились\\ &&  соответсвующие методы шифрования\\
+	\hline 
+	9 & \includegraphics[scale=0.3]{img/database/main_open_methods2.png} & Так же можно увидеть, \\ && что для нового пользователя появились\\ &&  соответсвующие методы расшифрования\\
+	\hline 
+\end{tabular} 
+\label{table:data_type2} 
+\end{table}
+
+\begin{table}[pt!]
+	\caption{Тестрование сохранения в файл}
+	\centering
+	\begin{tabular}{|c|c|c|}
+	\hline 
+	№  & Результат & Примечание \\ 
+	\hline 
+	1 & \includegraphics[scale=0.3]{img/file/open/text_open4.png} & Вводим текст в поле для \\ && ввода текста (memo) \\
+	\hline 
+	2 & \includegraphics[scale=0.3]{img/file/save/text_path.png} & Выбираем путь, куда будет \\ && сохранен файл с текстом\\
+	\hline 
+	3 & \includegraphics[scale=0.3]{img/file/save/text_okey_save.png} & Вывод сообщения о том что файл сохранен\\
+	\hline 
+\end{tabular} 
+\label{table:data_type3} 
+\end{table}
+
+\begin{table}[pt!]
+	\caption{Тестрование открытия файла}
+	\centering
+	\begin{tabular}{|c|c|c|}
+	\hline 
+	№  & Результат & Примечание \\ 
+	\hline 
+	1 & \includegraphics[scale=0.3]{img/file/open/text_clear.png} & Выбираем очистку поля ввода \\
+	\hline 
+	2 & \includegraphics[scale=0.3]{img/file/open/text_clear1.png} & Видим что поле очистилось\\
+	\hline 
+	3 & \includegraphics[scale=0.3]{img/file/open/text_open.png} & Выбираем открытие файла\\
+	\hline 
+\end{tabular} 
+\label{table:data_type4} 
+\end{table}
+\begin{table}[pt!]
+	\caption{Тестрование открытия файла}
+	\centering
+	\begin{tabular}{|c|c|c|}
+	\hline 
+	№  & Результат & Примечание \\ 
+	\hline 
+	5 & \includegraphics[scale=0.3]{img/file/open/text_open2.png} & Выбираем путь до файла\\
+	\hline 
+	6 & \includegraphics[scale=0.3]{img/file/open/text_open3.png} & Видим, что файл открылся\\
+	\hline
+	7 & \includegraphics[scale=0.3]{img/file/open/text_open4.png} & Текст из файла в поле\\
+	\hline
+\end{tabular} 
+\label{table:data_type5} 
+\end{table}
+
 \newpage\section*{Выводы}
 \addcontentsline{toc}{section}{Выводы}
-В ходе выполнения лабораторной работы было разработано и проведено системное тестирвание пректа. Для написания тестов была использована библиотека JUnit, а действия пользователя моделировались с помошью библиотеки TestFX. Ручные тесты составлялись из рассчёта на то, чтобы смоделировать типовые действие пользователя, которые не были протестированы на предыдущем этапе. В ходе тестирования ошибок не обнаружено.
+В ходе выполнения лабораторной работы было разработано и проведено комплексное тестирвание пректа. Для написания тестов была использована библиотека JUnit, а действия пользователя моделировались с помошью библиотеки TestFX. Ручные тесты составлялись из рассчёта на то, чтобы смоделировать типовые действие пользователя, которые не были протестированы на предыдущем этапе. В ходе тестирования ошибок не обнаружено.
 
-\newpage\section*{Приложения}
-\addcontentsline{toc}{section}{Приложения}
+\newpage\section*{Приложение 1. Исходный код тестируемой программы}
+\addcontentsline{toc}{section}{Приложение 1. Исходный код тестируемой программы}
+
+\newpage\section*{Приложение 2. Исходный код тестирующих классов}
+\addcontentsline{toc}{section}{Приложение 2. Исходный код тестирующих классов}
 
 
 \end{document}
