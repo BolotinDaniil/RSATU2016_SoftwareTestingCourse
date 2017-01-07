@@ -540,6 +540,48 @@
     }
 \end{lstlisting}
 
+\subsection{Описание методов и тестов класса UtilFunctions}
+
+Данный класс реализует функции, необходимые во многих модулях проекта. А именно проверку строки на пустоту и MD5 хеширование(применяется для хранения паролей). Необходимо проверить эту функциональнсть, для чего и разработан класс UtilFunctionsTest.
+\par Тестирование md5 представлено в листинге \ref{listing:testMd5}.
+
+\begin{lstlisting}[language=java, caption=тестирование md5 , label=listing:testMd5]
+    @Test
+    public void md5EqualsTesting() {
+        String expected = md5Custom("1");
+        assertEquals(expected, "c4ca4238a0b923820dcc509a6f75849b");
+        expected = md5Custom("md5test");
+        assertEquals(expected, "82da61aa724b5d149a9c5dc8682c2a45");
+        expected = md5Custom("абра-кадбра, магия какая-то");
+        assertEquals(expected, "783e47ca544ddf34ccce81b524adbbe3");
+    }
+
+    @Test
+    public void md5NullArgument() {
+        assertEquals(md5Custom(null), "");
+    }
+
+\end{lstlisting}
+
+
+Тестирование метода проверки строки на пустоту представлено в листинге \ref{listing:testIsNullString}
+
+\begin{lstlisting}[language=java, caption=тестирование isNullString, label=listing:testIsNullString]
+    @Test
+    public void isNullStringTest() {
+        assertEquals(isNullString(null), true);
+        assertEquals(isNullString(""), true);
+        assertEquals(isNullString("          "), true);
+        assertEquals(isNullString("    dsfsdf   "), false);
+        assertEquals(isNullString("тестовое значение"), false);
+        assertEquals(isNullString(" "), true);
+    }
+\end{lstlisting}
+
+\subsection{Описание тестирования класса Login}
+
+\subsection{Описание тестирования класса MainWindow}
+
 
 \newpage \section{Интеграционное тестирование}
 \subsection{Общее описание}
