@@ -269,6 +269,277 @@
 \newpage \section{Модульное тестирование}
 \subsection{Общее описание}
 Целью модульного тестирования является проверка корректности работы отдельных функций классов программы.
+Для его проведения использована библиотека jUnit, а также TestFX для моделирования работы полльзователя с интерфейсом программы (GUI). Для проведения интеграционного были использованы эти же библиотеки, только там уже проверялось взаимодействие классов программы. Поэтому для проведения этих этапов тестирования был разработан общий набор классов для тестирования GUI, который представлен на рисунке \ref{fig:class_diagram_tests_gui}. На диаграмме упущены атрибуты и методы. классов.
+
+\begin{center}
+	\begin{figure}[h!]
+		\centering
+		\includegraphics[scale=0.6]{img/class_diagram_ui_tests.png}
+		\caption{Диаграмма классов для тестирования GUI}
+		\label{fig:class_diagram_tests_gui}
+	\end{figure}
+\end{center}
+
+Также дополнитеьно для модульного тестирования классов шифрования и регистрации разработаны классы BitReversCipherTest, MonoAlphabetCipherTest и UtilFunctionsTest.
+
+\newpage\subsection{Описание методов и тестов класса MonoAlphabetCipher}
+\subsubsection{Метод createOpenAlphabet}
+Метод инициализирует массив допустимых символов. Сначала должен быть пробел, потом символы 'a' - 'я' заисключением символов 'ё' и 'й'. Исходный код представлен в листинге \ref{listing:createOpenAlphabet}. Метод унаследован их базового класса.
+\begin{lstlisting}[language=java, caption=метод createOpenAlphabet, label = listing:createOpenAlphabet]
+	private void createOpenAlphabet() {
+        openAlphabet[0] = '\u0020';
+        for (int i = 0; i < 9; i++) {
+            openAlphabet[i + 1] = (char) ('а' + i);
+        }
+        for (int i = 10; i < 32; ++i) {
+            openAlphabet[i] = (char) ('а' + i);
+        }
+    }
+\end{lstlisting}
+Необходимо проверить привильность инициализации, это сделано в листинге \ref{listing:testCalculationPrivateAlphabet}
+\subsection{Метод calculationPrivateAlphabet}
+Вычисляет закрытый алфавит на основании ключа шифрования (целое число, не превышающее мо модулю $10^9$) (листинг \ref{listing:calculationPrivateAlphabet}). Затем при шифровании символ, имеющий позицию i в OpenAlphabet заменяется символом с этим же номером из массива PrivetAlphabet.
+\begin{lstlisting}[language=java, caption=метод calculationPrivateAlphabet, label = listing:calculationPrivateAlphabet]
+	@Override
+    public void calculationPrivateAlphabet(Integer key) {
+        for (int i = 0; i < 32; i++) {
+            privateAlphabet[i] = openAlphabet[Math.floorMod(i + key, 32)];
+        }
+    }
+    
+\end{lstlisting}
+Необходимо проверитть правильность генерации закрытого и открытого алфавита. это делает следующий метод (листинг \ref{listing:testCalculationPrivateAlphabet}). Закрый алфавит созданый по ключу 0 должен совпадать с открытым ключом.
+\begin{lstlisting}[language=java, caption=метод теста testCalculationPrivateAlphabet, label = listing:testCalculationPrivateAlphabet]
+@Test
+    public void testCalculationPrivateAlphabet() {
+        char[] actuals = {' ', 'а', 'б', 'в', 'г', 'д', 'е', 'ж', 'з', 'и', 'к', 'л', 'м', 'н', 'о', 'п', 'р', 'с', 'т', 'у', 'ф', 'х', 'ц', 'ч', 'ш', 'щ', 'ъ', 'ы', 'ь', 'э', 'ю', 'я'};
+        monoAlphabetCipher.calculationPrivateAlphabet(0);
+        assertArrayEquals(monoAlphabetCipher.getPrivateAlphabet(), actuals);
+        assertArrayEquals(monoAlphabetCipher.getOpenAlphabet(), actuals);
+        assertArrayEquals(monoAlphabetCipher.getOpenAlphabet(), monoAlphabetCipher.getOpenAlphabet());
+    }
+\end{lstlisting}
+Далее проверка генерации закрытого алфавита при ненулевом ключе (листинг \ref{listing:testCalculationPrivateAlphabetCaesarCipher}).
+\begin{lstlisting}[language=java, caption=метод теста testCalculationPrivateAlphabet, label = listing:testCalculationPrivateAlphabetCaesarCipher]
+	@Test
+    public void testCalculationPrivateAlphabetCaesarCipher() {
+        char[] actuals = {'в', 'г', 'д', 'е', 'ж', 'з', 'и', 'к', 'л', 'м', 'н', 'о', 'п', 'р', 'с', 'т', 'у', 'ф', 'х', 'ц', 'ч', 'ш', 'щ', 'ъ', 'ы', 'ь', 'э', 'ю', 'я', ' ', 'а', 'б'};
+        monoAlphabetCipher.calculationPrivateAlphabet(3);
+        assertArrayEquals(monoAlphabetCipher.getPrivateAlphabet(), actuals);
+\end{lstlisting}
+Тестируем возвращает ли метод исключение при некорректном значении ключа (листинг \ref{listing1:testExceptions}).
+\begin{lstlisting}[language=java, caption=методы проверки исключений, label = listing1:testExceptions]
+	@Test(expected = NullPointerException.class)
+    public void testNullCalculationPrivateAlphabet() {
+        monoAlphabetCipher.calculationPrivateAlphabet(null);
+    }
+
+    @Test(expected = ClassCastException.class)
+    public void testWrongArgumentCalculationPrivateAlphabet() {
+        monoAlphabetCipher.calculationPrivateAlphabet("test");
+    }
+\end{lstlisting}
+\subsubsection{Метод encodeText и decodeText}
+Выполняют шифрование и дешифрование текста. Эти методы унаследованы из базового класса (листинг \ref{listing1:encodeAndDecode}). Если переданная строка содержит символы, недопустимые в данном алфавите, то метод должен вернуть строку "Недопустимый символ. Шифрование/Дешифрование не возможно".
+\begin{lstlisting}[language=java, caption=методы encode и decode, label = listing1:encodeAndDecode]
+     /**
+     * Закодировать текст
+     *
+     * @param originalText текст
+     * @return закодированный текст
+     */
+    public String encodeText(String originalText) {
+        originalText = originalText.replaceAll("\n", " ").toLowerCase();
+        char[] text = originalText.toCharArray();
+        char[] result = new char[text.length];
+        int index;
+        for (int i = 0; i < text.length; i++) {
+            index = contains(openAlphabet, text[i]);
+            if (index < 0) return "Недопустимый символ. Шифрование не возможно";
+            result[i] = privateAlphabet[index];
+        }
+        return String.valueOf(result);
+    }
+
+    /**
+     * Раскодировать текст
+     *
+     * @param originalText текст
+     * @return раскодированный текст
+     */
+    public String decodeText(String originalText) {
+        char[] text = originalText.toCharArray();
+        char[] result = new char[text.length];
+        int index;
+        for (int i = 0; i < text.length; i++) {
+            index = contains(privateAlphabet, text[i]);
+            if (index < 0) return "Недопустимый символ. Расшифровка не возможно";
+            result[i] = openAlphabet[index];
+        }
+        return String.valueOf(result);
+    }
+
+    private int contains(char[] chars, char symbol) {
+        for (int i = 0; i < chars.length; i++) {
+            if (chars[i] == symbol) {
+                return i;
+            }
+        }
+        return -1;
+    }
+\end{lstlisting}
+Необходимо проверить корректность шифрования. Это делают следующие методы (листинг \ref{listing1:testEncocodeAndDecode}).
+\begin{lstlisting}[language=java, caption=методы проверки корректности шифрования/дешифрования, label = listing1:testEncocodeAndDecode]
+    @Test
+    public void testEncodeText() {
+        monoAlphabetCipher.calculationPrivateAlphabet(3);
+        assertEquals(monoAlphabetCipher.encodeText("тест"), "хифх");
+    }
+
+    @Test
+    public void testEncodeAndDecode() {
+        monoAlphabetCipher.calculationPrivateAlphabet(30);
+        String encode = monoAlphabetCipher.encodeText("тест");
+        assertEquals("тест", monoAlphabetCipher.decodeText(encode));
+    }
+
+\end{lstlisting}
+А также корректность певедения метода при недопустимой строке (листинг \ref{listing1:testWrongCharInEncodeAndDecodeText}).
+\begin{lstlisting}[language=java, caption=методы проверки корректности шифрования/дешифрования, label = listing1:testWrongCharInEncodeAndDecodeText]
+    @Test
+    public void testWrongCharInEncodeAndDecodeText() {
+        monoAlphabetCipher.calculationPrivateAlphabet(1);
+        Assert.assertEquals(monoAlphabetCipher.encodeText("tttt"), "Недопустимый символ. Шифрование не возможно");
+        Assert.assertEquals(monoAlphabetCipher.encodeText("й"), "Недопустимый символ. Шифрование не возможно");
+        Assert.assertEquals(monoAlphabetCipher.encodeText("ё"), "Недопустимый символ. Шифрование не возможно");
+        Assert.assertEquals(monoAlphabetCipher.encodeText("-"), "Недопустимый символ. Шифрование не возможно");
+        Assert.assertEquals(monoAlphabetCipher.encodeText("+"), "Недопустимый символ. Шифрование не возможно");
+        Assert.assertEquals(monoAlphabetCipher.decodeText("tttt"), "Недопустимый символ. Расшифровка не возможно");
+        Assert.assertEquals(monoAlphabetCipher.decodeText("й"), "Недопустимый символ. Расшифровка не возможно");
+        Assert.assertEquals(monoAlphabetCipher.decodeText("ё"), "Недопустимый символ. Расшифровка не возможно");
+        Assert.assertEquals(monoAlphabetCipher.decodeText("-"), "Недопустимый символ. Расшифровка не возможно");
+        Assert.assertEquals(monoAlphabetCipher.decodeText("+"), "Недопустимый символ. Расшифровка не возможно");
+    }
+\end{lstlisting}
+\newpage\subsection{Описание методов и тестов класса BitReverseCipher}
+Данный класс выполняет шифрование/дешифрование методом побитовой перестановки. Ключём шифрования является строка являющаяся перестановкий "12345", которая задаёт правило перестановки битов для каждого символа. Напимер строка "54312" означает, что 5-й бит будет переставлен на 1 место (нумерация от 1 до 5), 4-й бит на 2-e место, 3-й бит остаётся на месте, 1-й бит идёт на 4 место, 2-й бит на 5-е.
+\par Далее описаны методы, которые переопределены у базового класса.
+\subsubsection{Метод findPosition}
+Метод на основе ключа генерирует массив, с правилами переставки битов в исходных символов (листинг \ref{listing2:findPosition}).
+\begin{lstlisting}[language=java, caption=метод findPosition, label=listing2:findPosition]
+    private int[] findPosition(String arrayKey) {
+        int[] result = new int[arrayKey.length()];
+        result[0] = arrayKey.indexOf("1");
+        result[1] = arrayKey.indexOf("2");
+        result[2] = arrayKey.indexOf("3");
+        result[3] = arrayKey.indexOf("4");
+        result[4] = arrayKey.indexOf("5");
+        return result;
+    }
+\end{lstlisting}
+Корректнгость данного метода проверяется при описанного дальше метода.
+\subsubsection{Метод calculationPrivateAlphabet}
+Метод генерирует закрытый алфавит. На вход подаётся строка с ключём (листинг \ref{listing2:calculationPrivateAlphabet}).
+\begin{lstlisting}[language=java, caption=метод calculationPrivateAlphabet, label=listing2:calculationPrivateAlphabet]
+    public void calculationPrivateAlphabet (String key) {
+        int[] arrayKey = findPosition(key);
+        for (int i = 0; i < 32; i++) {
+            StringBuilder stI = new StringBuilder(Integer.toBinaryString(i));
+            for (int j = stI.length(); j < 5; j++) {
+                stI.insert(0, "0");
+            }
+            StringBuilder charAlph = new StringBuilder();
+            char[] mass = stI.toString().toCharArray();
+            for (int anArrayKey : arrayKey) {
+                charAlph.append(mass[anArrayKey]);
+            }
+            int exitI = Integer.parseInt(charAlph.toString(), 2);
+            privateAlphabet[i] = openAlphabet[exitI];
+        }
+    }
+\end{lstlisting}
+
+Можно заметить, что шифрование пробела всегда приведёт к пробельному символу(код 0). Для проверки этого разработаен следующий метод (листинг \ref{listing2:testFirstElementPrivateAlphabetAtAnyKey}).
+\begin{lstlisting}[language=java, caption=метод calculationPrivateAlphabet, label=listing2:testFirstElementPrivateAlphabetAtAnyKey]
+    @Test
+    public void testFirstElementPrivateAlphabetAtAnyKey() {
+        bitReversCipher.calculationPrivateAlphabet("54321");
+        assertEquals(bitReversCipher.getPrivateAlphabet()[0], ' ');
+        bitReversCipher.calculationPrivateAlphabet("53241");
+        assertEquals(bitReversCipher.getPrivateAlphabet()[0], ' ');
+        bitReversCipher.calculationPrivateAlphabet("13425");
+        assertEquals(bitReversCipher.getPrivateAlphabet()[0], ' ');
+        bitReversCipher.calculationPrivateAlphabet("31245");
+        assertEquals(bitReversCipher.getPrivateAlphabet()[0], ' ');
+    }
+\end{lstlisting}
+
+Далее проверить в целом построение закрытого и открытого алфавита (листинг \ref{listing2:testCalculationPrivateAlphabet}).
+\begin{lstlisting}[language=java, caption=метод calculationPrivateAlphabet, label=listing2:testCalculationPrivateAlphabet]
+    @Test
+    public void testCalculationPrivateAlphabetEqualsOpenAlphabet() {
+        char[] actuals = {' ', 'а', 'б', 'в', 'г', 'д', 'е', 'ж', 'з', 'и', 'к', 'л', 'м', 'н', 'о', 'п', 'р', 'с', 'т', 'у', 'ф', 'х', 'ц', 'ч', 'ш', 'щ', 'ъ', 'ы', 'ь', 'э', 'ю', 'я'};
+        bitReversCipher.calculationPrivateAlphabet("12345");
+        assertArrayEquals(bitReversCipher.getPrivateAlphabet(), actuals);
+        assertArrayEquals(bitReversCipher.getOpenAlphabet(), actuals);
+        assertArrayEquals(bitReversCipher.getOpenAlphabet(), bitReversCipher.getOpenAlphabet());
+    }
+
+    @Test
+    public void testCalculationPrivateAlphabet() {
+        char[] actuals = {' ', 'р', 'з', 'ш', 'г', 'ф', 'м', 'ь', 'б', 'т', 'к', 'ъ', 'е', 'ц', 'о', 'ю', 'а', 'с', 'и', 'щ', 'д', 'х', 'н', 'э', 'в', 'у', 'л', 'ы', 'ж', 'ч', 'п', 'я'};
+        bitReversCipher.calculationPrivateAlphabet("54321");
+        assertArrayEquals(bitReversCipher.getPrivateAlphabet(), actuals);
+    }
+\end{lstlisting}
+Затем можно проверить, что при некорректном значии ключа происходят исключения (листинг \ref{listing2:testWrongValueForCalculationPrivateAlphabet}).
+\begin{lstlisting}[language=java, caption=метод calculationPrivateAlphabet, label=listing2:testWrongValueForCalculationPrivateAlphabet]
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void testWrongValueForCalculationPrivateAlphabet() {
+        bitReversCipher.calculationPrivateAlphabet("00000");
+    }
+
+    @Test(expected = ClassCastException.class)
+    public void testWrongArgumentForCalculationPrivateAlphabet() {
+        bitReversCipher.calculationPrivateAlphabet(1213234);
+    }
+\end{lstlisting}
+
+\subsubsection{Тестирование остальных методов}
+
+Далее необходимо проверить правальность шифрования и расшифрования строки (листинг \ref{listing2:testEncodeDecode}).
+\begin{lstlisting}[language=java, caption=метод calculationPrivateAlphabet, label=listing2:testEncodeDecode]
+	@Test
+    public void testEncode() {
+        bitReversCipher.calculationPrivateAlphabet("54321");
+        assertEquals(bitReversCipher.encodeText("тест"), "имси");
+    }
+
+    @Test
+    public void testEncodeDecode() {
+        bitReversCipher.calculationPrivateAlphabet("54321");
+        String encode = bitReversCipher.encodeText("тест");
+        assertEquals(bitReversCipher.decodeText(encode), "тест");
+    }
+\end{lstlisting}
+Проверка поведения при некоректном шифруемом/дешифруемом тексте (листинг \ref{listing2:testWrongCharInEncodeAndDecodeText}).
+\begin{lstlisting}[language=java, caption=метод calculationPrivateAlphabet, label=listing2:testWrongCharInEncodeAndDecodeText]
+    @Test
+    public void testWrongCharInEncodeAndDecodeText() {
+        bitReversCipher.calculationPrivateAlphabet("54321");
+        Assert.assertEquals(bitReversCipher.encodeText("tttt"), "Недопустимый символ. Шифрование не возможно");
+        Assert.assertEquals(bitReversCipher.encodeText("й"), "Недопустимый символ. Шифрование не возможно");
+        Assert.assertEquals(bitReversCipher.encodeText("ё"), "Недопустимый символ. Шифрование не возможно");
+        Assert.assertEquals(bitReversCipher.encodeText("-"), "Недопустимый символ. Шифрование не возможно");
+        Assert.assertEquals(bitReversCipher.encodeText("+"), "Недопустимый символ. Шифрование не возможно");
+        Assert.assertEquals(bitReversCipher.decodeText("tttt"), "Недопустимый символ. Расшифровка не возможно");
+        Assert.assertEquals(bitReversCipher.decodeText("й"), "Недопустимый символ. Расшифровка не возможно");
+        Assert.assertEquals(bitReversCipher.decodeText("ё"), "Недопустимый символ. Расшифровка не возможно");
+        Assert.assertEquals(bitReversCipher.decodeText("-"), "Недопустимый символ. Расшифровка не возможно");
+        Assert.assertEquals(bitReversCipher.decodeText("+"), "Недопустимый символ. Расшифровка не возможно");
+    }
+\end{lstlisting}
+
 
 \newpage \section{Интеграционное тестирование}
 \subsection{Общее описание}
