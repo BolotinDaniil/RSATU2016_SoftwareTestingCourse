@@ -578,9 +578,164 @@
     }
 \end{lstlisting}
 
-\subsection{Описание тестирования класса Login}
+\subsection{Описание тестиования класса RegistryController}
+Данный класс отвечает за окно регистрации пользователя и за взаимодействие с БД во время регистрации.
+Тестирование осуществлялось с помощью моделирования рботы пользователя с GUI(TestFX). Для регистрации необходимо как минимум заполнить поля "Логин" и "Пароль", поэтому необходимо протестировать, что при попытке регистрации не указав хотя бы одно из этих полей будет выведено соответствующее сообщение. Это тестирование выполняет класс RegistryUiTest (листинг \ref{listing:testNullFields}). Также необходимо протестировать поведение программы при попытке зарегистрировать пользователя, логин которого совпадает с зарегестрированным ранее. Это выполняет класс DatabaseAndRegistryUiTest (листинг \ref{listing:testRegExistUser}).
 
-\subsection{Описание тестирования класса MainWindow}
+\begin{lstlisting}[language=java, caption=тестирование не заполнения полей при регистрации, label=listing:testNullFields]
+public class RegistryUiTest extends GuiTest {
+    private static FxRobot robot;
+    private Label outputErrorText;
+
+    @BeforeClass
+    public static void createRobot() {
+        robot = new FxRobot();
+    }
+
+    @Before
+    public void getOutputErrorText() {
+        outputErrorText =  find("#outputErrorText");
+    }
+
+    @After
+    public void clickResetField() {
+        robot.clickOn("#reset");
+    }
+
+    @Override
+    protected Parent getRootNode() {
+        Parent parent = null;
+        try {
+            parent = FXMLLoader.load(getClass().getResource("/fxml/Registry.fxml"));
+            return parent;
+        } catch (IOException ex) {
+            // TODO ...
+        }
+        return parent;
+    }
+
+
+    @Test
+    public void emptyLoginAndPasswordFieldTest() {
+        robot.clickOn("#signUp").sleep(500);
+        Assert.assertEquals(outputErrorText.getText(), "Не заполнены обязательные поля: Логин; Пароль; ");
+    }
+
+    @Test
+    public void emptyLoginFieldTest() {
+        robot.clickOn("#login").write("notEmptyLogin");
+        robot.clickOn("#signUp");
+        Assert.assertEquals(outputErrorText.getText(), "Не заполнены обязательные поля: Пароль; ");
+    }
+
+    @Test
+    public void emptyPasswordFieldTest() {
+        robot.clickOn("#password").write("tesPass");
+        robot.clickOn("#signUp");
+        Assert.assertEquals(outputErrorText.getText(), "Не заполнены обязательные поля: Логин; ");
+    }
+}
+
+\end{lstlisting}
+
+\begin{lstlisting}[language=java, caption=тестирование попытки регистрации существующего пользователя, label=listing:testRegExistUser]
+public class DatabaseAndRegistryUiTest extends LoginUiCustomTest {
+
+    @Test
+    public void userExistsTest() {
+        clickOn(registry);
+        clickOn("#login").write("Aleksey");
+        clickOn("#password").write("tesPass");
+        clickOn("#signUp");
+        Label outputErrorText = find("#outputErrorText");
+        Assert.assertEquals(outputErrorText.getText(), "Пользователь с логином: Aleksey существует!");
+        closeRegistryWindowAndTest();
+    }
+
+
+}
+
+\end{lstlisting}
+
+\subsection{Описание тестирования класса MainWindowController}
+Данный класс отвечает за главное окно программы. Необходимо проверить, корректность его работы. Это сделано в классе MainWindowUiTest, который описан в листинге \ref{listing:testMainWindow}. А именно проверить корректность работы поля memo, работу кнопки "Очистить", и что по умолчанию не доступен ни один метод шифрования и дешифрования.
+
+\begin{lstlisting}[language=java, caption=тестирование MainWindow, label=listing:testMainWindow]
+public class MainWindowUiTest extends CustomMainWindowUiTest {
+    private TextArea textArea;
+
+    @Before
+    public void findTextArea() {
+        textArea = find("#textArea");
+    }
+
+    @Override
+    protected Parent getRootNode() {
+        Parent parent = null;
+        try {
+            parent = FXMLLoader.load(getClass().getResource("/fxml/MainWindow.fxml"));
+            return parent;
+        } catch (IOException ex) {
+            // TODO ...
+        }
+        return parent;
+    }
+
+    @Test
+    public void writeInTextAreaTest() {
+        robot.clickOn(textArea).write("авыаыва");
+        verifyThat(textArea, hasText("авыаыва"));
+    }
+
+    @Test
+    public void clickAllEncodeMenuTest() {
+        robot.clickOn("#encodeMenu");
+        clickAllMethodsMenu("encode");
+        robot.clickOn("#encodeMenu");
+    }
+
+    @Test
+    public void clickAllDecodeMenuTest() {
+        robot.clickOn("#decodeMenu");
+        clickAllMethodsMenu("decode");
+        robot.clickOn("#decodeMenu");
+    }
+
+    private static void clickAllMethodsMenu(String variantName) {
+        String itemId;
+        for (String name : methodNames) {
+            itemId = "#" + variantName + name;
+            robot.clickOn(itemId);
+        }
+    }
+    @Test
+    public void clearTextArea() {
+        String testText = "текстовый текст, для проверки очистки области ввода текста";
+        robot.clickOn(textArea).write(testText);
+        verifyThat(textArea, hasText(testText));
+        robot.clickOn("#fileMenu").clickOn("#clear");
+        verifyThat(textArea, hasText(""));
+    }
+}
+\end{lstlisting}
+
+\subsection{Результаты тестирования и выводы на данном этапе}
+Результаты прохождения тестов представлены в таблице 
+
+Тут можно запилить такую табличку. Как считаешь?
+
+\begin{table}[h]
+	\caption{Тесты С1}
+	\centering
+	\begin{tabular}{|c|c|c|}
+	\hline 
+	№ & Тестирующий класс: название теста & Результат \\ 
+	\hline 
+	1 & MainWindowUiTest: writeInTextAreaTest & Успешно пройден  \\
+	\hline 
+\end{tabular} 
+\label{table:tests_C1} 
+\end{table}
 
 
 \newpage \section{Интеграционное тестирование}
