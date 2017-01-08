@@ -208,6 +208,10 @@
 
 \tableofcontents
 
+\newpage\section*{Введение}
+\addcontentsline{toc}{section}{Введение}
+Целью данного курсового проекта является проведение модульного, интеграционного и системного тестирования приложения.
+
 \newpage\section{Общее описание тестируемой системы}
 
 Проект предназначен для шифрования/дешифрования текста различными методами: моноалфавитной замены, гомофонической замены, полиалфавитной замены, полиграммной замены, вертикальной перестановки с ключом,  побитовой перестановки, кодом Виженера и гоммирования с ключом. Реализоваными являются методы: моноалфавитной замены и побитовой перестановки.
@@ -743,6 +747,7 @@ public class MainWindowUiTest extends CustomMainWindowUiTest {
 \subsection{Общее описание}
 Целью интеграционного тестирования является проверка всех возможных непосредвенных взаимодействий классов программы друг с другом. 
 Для его проведения использованы следующие библиотеки: JUnit и TestFX.
+Были разработаны класс IntegrationCipherTest, а также представленные на рисунке \ref{fig:class_diagram_tests_gui} классы MainWindowUiIntegrationTest, LoginUiTest, LoginUiCloseTest.
 
 \newpage\subsection{Тестирование взаимодействия класса Login}
 Login - это главный класс приложения, который запускает его и одновременно является контроллером для окна авторизации. Пользователь должен пройти авторизацию или зарегистрироваться. Если после третьей попытки не удалось авторизиваться, то программа закрывается.
@@ -833,7 +838,7 @@ public class LoginUiCloseTest extends LoginUiCustomTest {
     }
 \end{lstlisting}
 
-\newpage\subsubsection{Тестирование взаимодействия классов \\MonoAlphabetCipher и BitReverseCipher}
+\newpage\subsection{Тестирование взаимодействия классов \\MonoAlphabetCipher и BitReverseCipher}
 Тестирование осуществляется посредством многократного шифрования и расшифрования текста различными методами. После последовательного шифрования и расшифрования разными методами с неизменными ключами текст должен совпасть с исходным. Если провести такой же тест, но при расшифровании изменить ключ одного из методов, то результат должен не совпасть с исходным. Далее проведём тест, при котором зашуфруем несколько раз обоими методами с разнами ключами и расшуфруем в обратном порядке с соответствующими ключами, результат должен совпасть с исходным. Все эти три теста описаны в классе IntegrationCipherTest, который представлен в листинге \ref{listing_cipher:test_cipher_methods}.
 
 \begin{lstlisting}[language=java, caption=класс IntegrationCipherTest, label=listing_cipher:test_cipher_methods]
@@ -907,7 +912,7 @@ public class IntegrationCipherTest {
 \end{lstlisting}
 
 
-\newpage\subsubsection{Тестирование взаимодействия класса MainWindow}
+\newpage\subsection{Тестирование взаимодействия класса MainWindow}
 MainWindow - класс отвечающий за главное окно программы. Он взаимодействует с классами, реализующими методы шифрования. Проведём тестирование, аналогичное тестированию классов MonoAlphabetCipher и BitReverseCipher, но теперь классы для шифрования будут взаимодействовать не напрямую, а через MainWindow (как и происходит на самом деле), посредством моделирвания работы пользователя с gui. Оно представлено в листинге \ref{listing_mainWindow:MainWindowUiIntegrationTestn}. Предыдушее тестирование направлено на проверку корректности классов шифрования и их взаимодействия, а такущее преимущественно на корректность работы MainWindow с данными классами.
 
 \begin{lstlisting}[language=java, caption=класс MainWindowUiIntegrationTest, label=listing_mainWindow:MainWindowUiIntegrationTestn]
@@ -984,6 +989,10 @@ public class MainWindowUiIntegrationTest extends CustomMainWindowUiTest {
     }
 }
 \end{lstlisting}
+
+\subsection{Результаты тестирования и выводы на данном этапе}
+
+На данном этапе было обнаружено, что
 
 \newpage \section{Системное тестирование}
 \subsection{Общее описание}
@@ -1139,6 +1148,8 @@ public class DatabaseAndRegistryUiTest extends LoginUiCustomTest {
 \end{tabular} 
 \label{table:data_type5} 
 \end{table}
+
+\subsection{Результаты тестирования и выводы на данном этапе}
 
 \newpage\section*{Выводы}
 \addcontentsline{toc}{section}{Выводы}
