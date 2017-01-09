@@ -299,12 +299,12 @@
 \item TestFX - для автоматизированой проверки графического интерфейса (GUI), с которым взаимодействует пользователь.
 \item JUnit - для проверки взаимодействия классов друг с другом, а так же для проверки отдельно взятых частей программы.
 \end{enumerate}
-\par При тестировании был применено ручное тестирования, для проверки зиписи текста в файл, а так же его чтения из файла. Ручное тестирование так же применялось для тестирования интерфейса. Для проверки содержимого БД использовался просмотрщик БД ИСР IntellijIdea.
+\par При тестировании было применено ручное тестирование, для проверки зиписи текста в файл, а так же его чтения из файла. Ручное тестирование так же применялось для тестирования интерфейса. Для проверки содержимого БД использовался просмотрщик БД ИСР IntellijIdea.
 
 \newpage \section{Модульное тестирование}
 \subsection{Общее описание}
 Целью модульного тестирования является проверка корректности работы отдельных функций классов программы.
-Для его проведения использована библиотека jUnit, а также TestFX для моделирования работы полльзователя с интерфейсом программы (GUI). При интеграционном тестирование были использованы те же библиотеки, но при этом моделировалось взаимодействие классов программы. Поэтому для проведения этого этапа тестирования были разработаны классы для тестирования GUI с обобщеным наборов методов, набор данных классов представлен на риунке \ref{fig:class_diagram_tests_gui}. Атрибуты и методы классов упущены на данной диагремме.
+Для его проведения использована библиотека jUnit, а также TestFX для моделирования работы полльзователя с интерфейсом программы (GUI). При интеграционном тестирование были использованы те же библиотеки, но при этом моделировалось взаимодействие классов программы. Поэтому для проведения этого этапа тестирования были разработаны классы для тестирования GUI с обобщеным наборов методов, набор данных классов представлен на риунке \ref{fig:class_diagram_tests_gui}. Атрибуты и методы классов упущены на данной диаграмме.
 
 \begin{center}
 	\begin{figure}[h!]
@@ -613,7 +613,7 @@
     }
 \end{lstlisting}
 
-\subsection{Описание тестиования класса RegistryController}
+\subsection{Описание тестирования класса RegistryController}
 Данный класс отвечает за окно регистрации пользователя и за взаимодействие с БД во время регистрации.
 Тестирование осуществлялось с помощью моделирования рботы пользователя с GUI (TestFX). Для регистрации необходимо как минимум заполнить поля "Логин" и "Пароль", поэтому необходимо протестировать, что при попытке регистрации не указав хотя бы одно из этих полей будет выведено соответствующее сообщение. Это тестирование выполняет класс RegistryUiTest (листинг \ref{listing:testNullFields}). Также необходимо протестировать поведение программы при попытке зарегистрировать пользователя, логин которого совпадает с зарегестрированным ранее. Это выполняет класс DatabaseAndRegistryUiTest (листинг \ref{listing:testRegExistUser}).
 
@@ -831,7 +831,7 @@ public class MainWindowUiTest extends CustomMainWindowUiTest {
 \end{table}
 
 \begin{table}[pt!]
-	\caption{Прохождение GUI тестов}
+	\caption{Прохождение GUI тестов при модульном тестировании}
 	\centering
 	\begin{tabular}{|c|l|l|}
 	\hline 
@@ -1112,11 +1112,50 @@ public class MainWindowUiIntegrationTest extends CustomMainWindowUiTest {
 
 \subsection{Результаты тестирования и выводы на данном этапе}
 
-На данном этапе было обнаружено, что
+Результаты прохождения тестов представлены в таблицах \ref{table:modul_testing_IntegrationCipherTest} - \ref{table:modul_testing_gui}
+
+На данном этапе было обнаружено, что что-то пошло не так.
+
+\begin{table}[h]
+	\caption{Прохождение тестов класса IntegrationCipherTest}
+	\centering
+	\begin{tabular}{|c|l|l|}
+	\hline 
+	№ &  Название теста & Результат \\ 
+	\hline 
+	1 &  integrationCipherEqualsTest & \textbf{Не пройден}  \\
+	\hline 
+	2 &  integrationCipherNotEqualsTest & Успешно пройден  \\
+	\hline 
+	3 & integrationDeepCipherEqualsTest & \textbf{Не пройден}  \\
+	\hline 
+\end{tabular} 
+\label{table:modul_testing_IntegrationCipherTest} 
+\end{table}
+
+\begin{table}[h!]
+	\caption{Прохождение автоматиированных GUI тестов при интеграционном тестировании (не полностью заполнено)}
+	\centering
+	\begin{tabular}{|c|l|l|}
+	\hline 
+	№ &  Название теста & Результат \\ 
+	\hline 
+	\multicolumn{3}{|c|}{Класс \textbf{LoginUiCloseTest}}\\
+	\hline
+	4 & threeWrongAuthorizationTest & Успешно пройден  \\
+	\hline 
+	\multicolumn{3}{|c|}{Класс \textbf{MainWindowUiIntegrationTest}}\\
+	\hline 
+	5 & integrationCipherEqualsTest & \textbf{Не пройден}  \\
+	\hline
+\end{tabular} 
+\label{table:modul_testing_gui} 
+\end{table}
 
 \newpage \section{Системное тестирование}
 \subsection{Общее описание}
-Целью является тестирование всей системы в целом на реальной БД.
+Целью является тестирование всей системы в целом как на тестовой, так и на реальной БД.
+Смоделируем типовое поведение пользователя как автоматизированно, так и вручную.
 
 \newpage \subsection{Тестирование работы с базой даных}
 Протестируем работу GUI и работу с базой данных.  
@@ -1154,7 +1193,99 @@ public class DatabaseAndRegistryUiTest extends LoginUiCustomTest {
 }
 \end{lstlisting}
 
-\subsubsection{Добавление пользователя в БД}
+\subsubsection{Добавление пользователя в тестовую БД}
+Автоматизировнно подменим БД приложения не тестовую и смоделируем регистрацию пользователя и проверим корректность работы приложения после его регистрации. Этот тест сделан с помощью TestFX. 
+\par Для начала зарегистрируем пользователя указав методы, которые не реализованы в приложении и убедимся в правильной реакции программы. Это реализовано в классе UserWorkingNotMethodsUiTesting, который представлен в листинге \ref{lstlisting_system:test_UserWithNotMethods}.
+
+\begin{lstlisting}[language=java, caption=код класса UserWorkingNotMethodsUiTesting, label=lstlisting_system:test_UserWithNotMethods]
+public class UserWorkingNotMethodsUiTesting extends UserWorkingTest {
+
+    @Test
+    public void fullWorkTest() {
+        openRegistryWindowAndTest();
+        registryTestUser();
+        authorizationTestUser();
+        assertEquals(MainWindowController.stage.getTitle(), "Добро пожаловать, Тест");
+        writeTextArea();
+        clickMethodTest("#encodeHomophonyReplacement");
+        checkDialogAndClose();
+        clickMethodTest("#encodeVizhinerMethod");
+        checkDialogAndClose();
+    }
+
+    private void registryTestUser() {
+        clickOn("#login").write("testUser2");
+        clickOn("#password").write("1");
+        clickOn("#firstName").write("Тест");
+        clickOn("#lastName").write("Тестовый");
+        clickOn("#firstMethod").clickOn("гомофоническая замена");
+        clickOn("#secondMethod").clickOn("код Виженера");
+        clickOn("#signUp");
+    }
+
+    private void authorizationTestUser() {
+        clickOn(userName).write("testUser2");
+        clickOn(password).write("1");
+        openMainWindowTest();
+    }
+
+    private void clickMethodTest(String methodName) {
+        clickOn("#encodeMenu").clickOn(methodName);
+    }
+
+    private void checkDialogAndClose() {
+        verifyThat("#labelDialog", hasText("Метод не реализован"));
+        clickOn("#okDialog");
+    }
+}
+\end{lstlisting}
+
+Далее зарегистрируем пользователя, указав методы, которые реализованы в приложении и убедимся, что они работают коректно при вызове из приложения.  Это реализовано в классе UserWorkingNotMethodsUiTesting, который представлен в листинге \ref{lstlisting_system:test_UserWithMethods}.
+
+\begin{lstlisting}[language=java, caption=код класса UserWorkingUiTesting, label=lstlisting_system:test_UserWithMethods]
+public class UserWorkingUiTesting extends UserWorkingTest {
+    @Test
+    public void fullWorkTest() {
+        openRegistryWindowAndTest();
+        registryTestUser();
+        authorizationTestUser();
+        assertEquals(MainWindowController.stage.getTitle(), "Добро пожаловать, Неизвестный");
+        writeTextArea();
+        integrationCipherEqualsTest();
+    }
+
+    private void registryTestUser() {
+        clickOn("#login").write("testUser");
+        clickOn("#password").write("1");
+        clickOn("#firstMethod").clickOn("побитовая перестановка");
+        clickOn("#signUp");
+    }
+
+    private void authorizationTestUser() {
+        clickOn(userName).write("testUser");
+        clickOn(password).write("1");
+        openMainWindowTest();
+    }
+
+    private void integrationCipherEqualsTest() {
+        clickOn("#encodeMenu").clickOn("#encodeMonoAlphabet")
+                .clickOn("#txtFieldDialog").write("24").clickOn("#okDialog");
+        clickOn("#decodeMenu").clickOn("#decodeBitRevers")
+                .clickOn("#txtFieldDialog").write("42351").clickOn("#okDialog");
+        clickOn("#encodeMenu").clickOn("#encodeBitRevers")
+                .clickOn("#txtFieldDialog").write("42351").clickOn("#okDialog");
+        clickOn("#decodeMenu").clickOn("#decodeMonoAlphabet")
+                .clickOn("#txtFieldDialog").write("24").clickOn("#okDialog");
+        TextArea textArea = find("#textArea");
+        Assert.assertEquals(textArea.getText(), actualText);
+    }
+}
+
+\end{lstlisting}
+
+
+
+\subsubsection{Добавление пользователя в реальную БД}
 \par Сценарий тестирования регистрации пользователя заключается в следующем:
 \begin{enumerate}
 \item На форме авторизации нажатие кнопки "Регистрация".
@@ -1252,6 +1383,7 @@ public class DatabaseAndRegistryUiTest extends LoginUiCustomTest {
 \end{tabular} 
 \label{table:data_type4} 
 \end{table}
+
 \begin{table}[pt!]
 	\caption{Тестрование открытия файла}
 	\centering
@@ -1269,7 +1401,48 @@ public class DatabaseAndRegistryUiTest extends LoginUiCustomTest {
 \label{table:data_type5} 
 \end{table}
 
-\subsection{Результаты тестирования и выводы на данном этапе}
+\newpage\subsection{Результаты тестирования и выводы на данном этапе}
+Результаты прохождения тестов представлены в таблицах \ref{table:system_testing_gui} - \ref{table:system_testing_by_hands}.
+
+Все тесты были пройдены успешно, ошибок не было обнаружено.
+
+\begin{table}[h!]
+	\caption{Прохождение автоматиированных GUI тестов при системном тестировании}
+	\centering
+	\begin{tabular}{|c|l|l|}
+	\hline 
+	№ &  Название теста & Результат \\ 
+	\hline 
+	\multicolumn{3}{|c|}{Класс \textbf{DatabaseAndRegistryUiTest}}\\
+	\hline
+	1 & userExistsTest & Успешно пройден  \\
+	\hline 
+	\multicolumn{3}{|c|}{Класс \textbf{UserWorkingNotMethodsUiTesting}}\\
+	\hline
+	2 &  fullWorkTest & Успешно пройден  \\
+	\hline 
+	\multicolumn{3}{|c|}{Класс \textbf{UserWorkingUiTesting}}\\
+	\hline
+	3 & fullWorkTest & Успешно пройден  \\
+	\hline
+\end{tabular} 
+\label{table:system_testing_gui} 
+\end{table}
+
+\begin{table}[h!]
+	\caption{Прохождение ручных тестов}
+	\centering
+	\begin{tabular}{|c|l|l|}
+	\hline 
+	№ &  Название теста & Результат \\ 
+	\hline
+	4 & Тестирование регистрации нового пользователя & Успешно пройден  \\
+	\hline
+	5 &  Тестирование работы с текстовым файлом & Успешно пройден  \\
+	\hline
+\end{tabular} 
+\label{table:system_testing_by_hands} 
+\end{table}
 
 \newpage\section*{Выводы}
 \addcontentsline{toc}{section}{Выводы}
