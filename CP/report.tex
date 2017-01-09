@@ -1114,7 +1114,8 @@ public class MainWindowUiIntegrationTest extends CustomMainWindowUiTest {
 
 Результаты прохождения тестов представлены в таблицах \ref{table:modul_testing_IntegrationCipherTest} - \ref{table:modul_testing_gui}
 
-На данном этапе было обнаружено, что что-то пошло не так.
+На данном этапе было обнаружено, что тесты 1, 3, 9, 11 были пройдены неверно.
+В результате анализа  была обнаружена ошибка, не замеченная при модульном тестровании: в базовом классе SubstitutionCipher поле privetAlphabet (закрытый алфавит - правила сопоставления символов при шифровании) было объявлено как static, т.е. все наследники этого класса ссылались на одно и тоже поле закрытого алфавит, из-за чего в данном поле хранился закрытый алфавит того класса, который последним выполнил метод calculationPrivateAlphabet. Такое поведение классов шифрования недопустимо, но не было замечено на предыдущем этапе, а при интеграционном тестировании оба наследника создавались одновременно и вначале выполняли шифрование алфавита, а после уже шифровали текст. Других ошибок в работе приложения обнаружено не было.
 
 \begin{table}[h]
 	\caption{Прохождение тестов класса IntegrationCipherTest}
@@ -1134,19 +1135,33 @@ public class MainWindowUiIntegrationTest extends CustomMainWindowUiTest {
 \end{table}
 
 \begin{table}[h!]
-	\caption{Прохождение автоматиированных GUI тестов при интеграционном тестировании (не полностью заполнено)}
+	\caption{Прохождение автоматиированных GUI тестов при интеграционном тестировании}
 	\centering
 	\begin{tabular}{|c|l|l|}
 	\hline 
 	№ &  Название теста & Результат \\ 
 	\hline 
-	\multicolumn{3}{|c|}{Класс \textbf{LoginUiCloseTest}}\\
+	\multicolumn{3}{|c|}{Класс \textbf{LoginUiTest}}\\
 	\hline
 	4 & threeWrongAuthorizationTest & Успешно пройден  \\
 	\hline 
+	\multicolumn{3}{|c|}{Класс \textbf{LoginUiCloseTest}}\\
+	\hline
+	5 & openMainWindowTest & Успешно пройден  \\
+	\hline
+	6 & wrongAuthorizationTest & Успешно пройден  \\
+	\hline
+	7 & openRegistryWindowTest & Успешно пройден  \\
+	\hline
+	8 & thisUserDoesntExistTest & Успешно пройден  \\
+	\hline 
 	\multicolumn{3}{|c|}{Класс \textbf{MainWindowUiIntegrationTest}}\\
 	\hline 
-	5 & integrationCipherEqualsTest & \textbf{Не пройден}  \\
+	9 & integrationCipherEqualsTest & \textbf{Не пройден}  \\
+	\hline
+	10 & integrationCipherNotEqualsTest & Успешно пройден  \\
+	\hline
+	11 & integrationDeepCipherEqualsTest &  \textbf{Не пройден}  \\
 	\hline
 \end{tabular} 
 \label{table:modul_testing_gui} 
