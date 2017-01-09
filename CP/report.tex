@@ -266,6 +266,8 @@
 	\end{figure}
 \end{center}
 
+\subsection{Системные требования}
+
 \newpage\section{Общее описание тестирования}
 В ходе данного тестирования проверяется работа пользовательского GUI как автоматизирванно (с помощью TestFx) так и в ручную. Проверяется работа приложения с базой данных, а также сохранение/загрузка текста в файл.
 
@@ -724,30 +726,120 @@ public class MainWindowUiTest extends CustomMainWindowUiTest {
 }
 \end{lstlisting}
 
-\subsection{Результаты тестирования и выводы на данном этапе}
-Результаты прохождения тестов представлены в таблице 
+\newpage\subsection{Результаты тестирования и выводы на данном этапе}
+Результаты прохождения тестов представлены в таблицах \ref{table:unit_testing_MonoAlphabetCipherTest} - \ref{table:unit_testing_UtilFunctionsTest}.
 
-Тут можно запилить такую табличку. Как считаешь?
+Все тесты были пройдены успешно, ошибок не было обнаружено.
 
 \begin{table}[h]
-	\caption{Тесты С1}
+	\caption{Прохождение тестов класса MonoAlphabetCipherTest}
 	\centering
-	\begin{tabular}{|c|c|c|}
+	\begin{tabular}{|c|l|l|}
 	\hline 
-	№ & Тестирующий класс: название теста & Результат \\ 
+	№ &  Название теста & Результат \\ 
 	\hline 
-	1 & MainWindowUiTest: writeInTextAreaTest & Успешно пройден  \\
+	1 &  testNullCalculationPrivateAlphabet & Успешно пройден  \\
+	\hline 
+	2 &  testWrongArgumentCalculationPrivateAlphabet & Успешно пройден  \\
+	\hline 
+	3 & testCalculationPrivateAlphabet & Успешно пройден  \\
+	\hline 
+	4 & testCalculationPrivateAlphabetCaesarCipher & Успешно пройден  \\
+	\hline 
+	5 & testEncodeText & Успешно пройден  \\
+	\hline 
+	6 & testEncodeAndDecode & Успешно пройден  \\
+	\hline 
+	7 & testWrongCharInEncodeAndDecodeText & Успешно пройден  \\
 	\hline 
 \end{tabular} 
-\label{table:tests_C1} 
+\label{table:unit_testing_MonoAlphabetCipherTest} 
 \end{table}
 
+\begin{table}[h]
+	\caption{Прохождение тестов класса BitReversCipherTest}
+	\centering
+	\begin{tabular}{|c|l|l|}
+	\hline 
+	№ &  Название теста & Результат \\ 
+	\hline 
+	8 &  testCalculationPrivateAlphabetEqualsOpenAlphabet & Успешно пройден  \\
+	\hline 
+	9 &  testCalculationPrivateAlphabet & Успешно пройден  \\
+	\hline 
+	10 & testFirstElementPrivateAlphabetAtAnyKey & Успешно пройден  \\
+	\hline 
+	11 & testLastElementPrivateAlphabetAtAnyKey & Успешно пройден  \\
+	\hline 
+	12 & testEncode & Успешно пройден  \\
+	\hline 
+	13 & testEncodeDecode & Успешно пройден  \\
+	\hline 
+	14 & testWrongValueForCalculationPrivateAlphabet & Успешно пройден  \\
+	\hline 
+	15 & testWrongArgumentForCalculationPrivateAlphabet & Успешно пройден  \\
+	\hline 
+	16 & testWrongCharInEncodeAndDecodeText & Успешно пройден  \\
+	\hline 
+\end{tabular} 
+\label{table:unit_testing_BitReversCipherTest} 
+\end{table}
+
+\begin{table}[h]
+	\caption{Прохождение тестов класса UtilFunctionsTest}
+	\centering
+	\begin{tabular}{|c|l|l|}
+	\hline 
+	№ &  Название теста & Результат \\ 
+	\hline 
+	17 &  md5EqualsTesting & Успешно пройден  \\
+	\hline 
+	18 &  md5NullArgument & Успешно пройден  \\
+	\hline 
+	19 & isNullStringTest & Успешно пройден  \\
+	\hline 
+\end{tabular} 
+\label{table:unit_testing_UtilFunctionsTest} 
+\end{table}
+
+\begin{table}[pt!]
+	\caption{Прохождение GUI тестов}
+	\centering
+	\begin{tabular}{|c|l|l|}
+	\hline 
+	№ &  Название теста & Результат \\ 
+	\hline 
+	\multicolumn{3}{|c|}{Класс \textbf{RegistryUiTest}}\\
+	\hline
+	17 &  emptyLoginAndPasswordFieldTest & Успешно пройден  \\
+	\hline 
+	18 &  emptyLoginFieldTest & Успешно пройден  \\
+	\hline 
+	19 & emptyPasswordFieldTest & Успешно пройден  \\
+	\hline 
+	\multicolumn{3}{|c|}{Класс \textbf{DatabaseAndRegistryUiTest}}\\
+	\hline
+	20 & userExistsTest & Успешно пройден  \\
+	\hline 
+	\multicolumn{3}{|c|}{Класс \textbf{MainWindowUiTest}}\\
+	\hline
+	21 & writeInTextAreaTest & Успешно пройден  \\
+	\hline
+	22 & clickAllEncodeMenuTest & Успешно пройден  \\
+	\hline
+	23 & clickAllDecodeMenuTest & Успешно пройден  \\
+	\hline
+	24 & clearTextArea & Успешно пройден  \\
+	\hline
+\end{tabular} 
+\label{table:unit_testing_UtilFunctionsTest} 
+\end{table}
 
 \newpage \section{Интеграционное тестирование}
 \subsection{Общее описание}
 Целью интеграционного тестирования является проверка всех возможных непосредвенных взаимодействий классов программы друг с другом. 
 Для его проведения использованы следующие библиотеки: JUnit и TestFX.
-Были разработаны класс IntegrationCipherTest, а также представленные на рисунке \ref{fig:class_diagram_tests_gui} классы MainWindowUiIntegrationTest, LoginUiTest, LoginUiCloseTest.
+Были разработаны класс IntegrationCipherTest, а также представленные на рисунке \ref{fig:class_diagram_tests_gui} классы MainWindowUiIntegrationTest, LoginUiTest, LoginUiCloseTest, UserWorkingNotMethodsUiTesting, UserWorkingUiTesting.
 
 \newpage\subsection{Тестирование взаимодействия класса Login}
 Login - это главный класс приложения, который запускает его и одновременно является контроллером для окна авторизации. Пользователь должен пройти авторизацию или зарегистрироваться. Если после третьей попытки не удалось авторизиваться, то программа закрывается.
@@ -998,7 +1090,7 @@ public class MainWindowUiIntegrationTest extends CustomMainWindowUiTest {
 \subsection{Общее описание}
 Целью является тестирование всей системы в целом на реальной БД.
 
-\newpage \subsection{Тестирование регистрации пользователя}
+\newpage \subsection{Тестирование работы с базой даных}
 Протестируем работу GUI и работу с базой данных.  
 
 \subsubsection{Попытка регистрации уже существующего пользователя}
@@ -1055,7 +1147,7 @@ public class DatabaseAndRegistryUiTest extends LoginUiCustomTest {
 \item Убедимя, что файл загружен правильно.
 \end{enumerate}
 
-\newpage \subsection{Проведение тестирования}
+\newpage \subsection{Проведение ручного тестирования}
 
 В таблицах \ref{table:data_type1} - \ref{table:data_type5}, описано применение ручных сценариев тестирования.
 
